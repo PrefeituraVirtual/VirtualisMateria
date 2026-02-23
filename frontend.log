@@ -1,0 +1,62 @@
+
+> materia_virtualis_frontend@1.0.0 dev
+> next dev -p 4001
+
+▲ Next.js 16.1.1 (Turbopack)
+- Local:         http://localhost:4001
+- Network:       http://10.0.100.14:4001
+- Environments: .env.local, .env
+- Experiments (use with caution):
+  ✓ optimizeCss
+  · optimizePackageImports
+  · serverActions
+
+✓ Starting...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+✓ Ready in 771ms
+Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta
+[32mInlined 3.63 kB (2% of original 156.34 kB) of _next/static/chunks/frontend_src_styles_globals_e243d1d5.css.[39m
+Time 170.692846
+ HEAD / 200 in 851ms (compile: 565ms, render: 286ms)
+Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta
+[32mInlined 3.90 kB (2% of original 156.34 kB) of _next/static/chunks/frontend_src_styles_globals_e243d1d5.css.[39m
+Time 147.278084
+ GET /auth/callback?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzODgzNSIsImNvdW5jaWxfbWVtYmVyX2lkIjoiMzg4MzUiLCJjb3VuY2lsX2lkIjoidmFscGFyYWlzby1kZS1nb2lhcyIsInJvbGUiOiJzZXJ2ZXIiLCJpc19wcmVzaWRlbnQiOmZhbHNlLCJpc19zdXBsZW50IjpmYWxzZSwiaWF0IjoxNzY5MzYyMTA5LCJleHAiOjE3Njk0NDg1MDksImF1ZCI6ImNvdW5jaWwtbWVtYmVycyIsImlzcyI6Im1hdGVyaWEtdmlydHVhbGlzIn0.SuLG7hKLW2o4F4a_HZTa-WfDftucw4n9jnWLki4eVT4&name=ODTWIN%20FRITSCHE%20FILHO&userId=38835 200 in 243ms (compile: 56ms, render: 187ms)
+(node:1180840) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta
+[32mInlined 3.90 kB (2% of original 156.34 kB) of _next/static/chunks/frontend_src_styles_globals_e243d1d5.css.[39m
+Time 101.637577
+ GET /auth/callback?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzODgzNSIsImNvdW5jaWxfbWVtYmVyX2lkIjoiMzg4MzUiLCJjb3VuY2lsX2lkIjoidmFscGFyYWlzby1kZS1nb2lhcyIsInJvbGUiOiJzZXJ2ZXIiLCJpc19wcmVzaWRlbnQiOmZhbHNlLCJpc19zdXBsZW50IjpmYWxzZSwiaWF0IjoxNzY5MzYyMjQwLCJleHAiOjE3Njk0NDg2NDAsImF1ZCI6ImNvdW5jaWwtbWVtYmVycyIsImlzcyI6Im1hdGVyaWEtdmlydHVhbGlzIn0.SRVPfSAlieBwMvyFOjxvyHCK9ExM5s7vXn6q0seL0Fk&name=ODTWIN%20FRITSCHE%20FILHO&userId=38835 200 in 130ms (compile: 5ms, render: 125ms)
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta
+✓ Compiled in 2.6s
+[32mInlined 3.45 kB (2% of original 156.34 kB) of _next/static/chunks/frontend_src_styles_globals_e243d1d5.css.[39m
+Time 143.912671
+ GET /transcricao 200 in 2.7s (compile: 2.5s, render: 167ms)
+ GET /_next/data/development/auth/login.json 200 in 89ms (compile: 81ms, render: 7ms)
+Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta
+Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta
+[32mInlined 3.05 kB (1% of original 156.34 kB) of _next/static/chunks/frontend_src_styles_globals_e243d1d5.css.[39m
+Time 87.522413
+[32mInlined 3.05 kB (1% of original 156.34 kB) of _next/static/chunks/frontend_src_styles_globals_e243d1d5.css.[39m
+Time 121.133887
+ GET /logo/logotipo1020.png 404 in 192ms (compile: 31ms, render: 162ms)
+ GET /images/login-bg-v3.png 404 in 189ms (compile: 50ms, render: 139ms)
+✓ Compiled in 416ms
+Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta
+[32mInlined 14.24 kB (9% of original 156.34 kB) of _next/static/chunks/frontend_src_styles_globals_e243d1d5.css.[39m
+Time 147.314272
+ GET /auth/login 200 in 202ms (compile: 6ms, render: 195ms)
+Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta
+[32mInlined 3.05 kB (1% of original 156.34 kB) of _next/static/chunks/frontend_src_styles_globals_e243d1d5.css.[39m
+Time 82.601398
+ GET /logo/logotipo1020.png 404 in 115ms (compile: 7ms, render: 108ms)
+Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta
+[32mInlined 3.05 kB (1% of original 156.34 kB) of _next/static/chunks/frontend_src_styles_globals_e243d1d5.css.[39m
+Time 67.913605
+ GET /images/login-bg-v3.png 404 in 92ms (compile: 5ms, render: 88ms)
+Warning: viewport meta tags should not be used in _document.js's <Head>. https://nextjs.org/docs/messages/no-document-viewport-meta
+[32mInlined 3.90 kB (2% of original 156.34 kB) of _next/static/chunks/frontend_src_styles_globals_e243d1d5.css.[39m
+Time 66.770355
+ GET /auth/callback?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzODgzNSIsImNvdW5jaWxfbWVtYmVyX2lkIjoiMzg4MzUiLCJjb3VuY2lsX2lkIjoidmFscGFyYWlzby1kZS1nb2lhcyIsInJvbGUiOiJzZXJ2ZXIiLCJpc19wcmVzaWRlbnQiOmZhbHNlLCJpc19zdXBsZW50IjpmYWxzZSwiaWF0IjoxNzY5MzYzMTE2LCJleHAiOjE3Njk0NDk1MTYsImF1ZCI6ImNvdW5jaWwtbWVtYmVycyIsImlzcyI6Im1hdGVyaWEtdmlydHVhbGlzIn0.WM4Em-MZXaUL2X61o7mj8d_y4jC-4F755pBUVikawKc&name=ODTWIN%20FRITSCHE%20FILHO&userId=38835 200 in 93ms (compile: 5ms, render: 88ms)

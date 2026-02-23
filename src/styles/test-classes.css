@@ -1,0 +1,34 @@
+/* Arquivo de teste para validar as classes customizadas do Tailwind */
+
+/* Testar classes básicas do Tailwind */
+.test-tailwind-base {
+  @apply bg-blue-500 text-white p-4 rounded-lg;
+}
+
+/* Testar cores customizadas Virtualis */
+.test-virtualis-blue {
+  @apply bg-virtualis-blue-600 text-white p-4 rounded-lg;
+}
+
+.test-virtualis-cyan {
+  @apply bg-virtualis-cyan-500 text-white p-4 rounded-lg;
+}
+
+/* Testar border e variáveis CSS */
+.test-border-custom {
+  @apply border border-border bg-background text-foreground;
+}
+
+/* Testar animações customizadas */
+.test-animations {
+  @apply animate-fade-in animate-slide-up;
+}
+
+/* Testar fontes customizadas */
+.test-fonts {
+  @apply font-sans;
+}
+
+.test-font-mono {
+  @apply font-mono;
+}

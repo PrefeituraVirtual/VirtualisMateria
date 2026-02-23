@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /auth/
+Disallow: /admin/
+Disallow: /materias/criar
+Disallow: /materias/*/editar
+Disallow: /perfil
+Disallow: /configuracoes
+
+Sitemap: https://seu-dominio.com.br/sitemap.xml
+Crawl-delay: 1

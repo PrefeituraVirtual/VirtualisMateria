@@ -1,0 +1,243 @@
+/* Fontes personalizadas */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Variáveis CSS para cores da marca Virtualis - Modern Palette */
+:root {
+  /* Primary Brand Colors (HSL) */
+  --virtualis-primary: 210 100% 50%; /* Bright Blue */
+  --virtualis-secondary: 190 90% 50%; /* Cyan */
+  --virtualis-gold: 45 93% 47%; /* Gold/Amber */
+  --virtualis-accent: 260 100% 65%; /* Purple/Violet for gradients */
+
+  /* Cores modo light */
+  --background: 210 20% 98%;
+  --foreground: 222 47% 11%;
+
+  /* Accessible text/border contrast (ratios vs --background) */
+  --text-primary: 222 47% 11%; /* ~15:1 */
+  --text-secondary: 215 16% 46%; /* ~4.5:1 */
+  --border-default: 218 11% 54%; /* ~3.7:1 */
+  --interactive-default: 220 83% 53%; /* ~4.9:1 */
+
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+
+  --primary: 210 100% 50%;
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222 47% 11.2%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222 47% 11.2%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 210 100% 50%;
+
+  --radius: 0.75rem;
+}
+
+/* Modo Dark - Cyberpunk/Futuristic Vibe */
+.dark {
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+
+  /* Accessible text/border contrast (ratios vs --background) */
+  --text-primary: 210 40% 98%; /* ~15:1 */
+  --text-secondary: 215 20% 65%; /* ~7:1 */
+  --border-default: 215 16% 46%; /* ~3.8:1 */
+  --interactive-default: 213 94% 68%; /* ~7:1 */
+
+  --card: 222 47% 11%;
+  --card-foreground: 210 40% 98%;
+
+  --popover: 222 47% 11%;
+  --popover-foreground: 210 40% 98%;
+
+  --primary: 210 100% 50%;
+  --primary-foreground: 222 47% 11.2%;
+
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+}
+
+/* Estilos base */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+    font-family: "Outfit", "Inter", system-ui, sans-serif;
+    background-image: radial-gradient(
+        at 0% 0%,
+        hsla(210, 100%, 93%, 0.3) 0px,
+        transparent 50%
+      ),
+      radial-gradient(at 100% 0%, hsla(45, 100%, 93%, 0.2) 0px, transparent 50%);
+  }
+
+  .dark body {
+    background-image: radial-gradient(
+        at 0% 0%,
+        hsla(222, 47%, 15%, 1) 0px,
+        transparent 50%
+      ),
+      radial-gradient(at 100% 0%, hsla(45, 47%, 15%, 0.2) 0px, transparent 50%);
+  }
+}
+
+/* Utilities Modernos */
+@layer utilities {
+  .glass {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-lg;
+  }
+
+  .glass-dark {
+    @apply dark:bg-gray-900/70 dark:backdrop-blur-lg dark:border-white/10 dark:shadow-xl;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-cyan-500 to-virtualis-gold-500 dark:from-blue-400 dark:via-cyan-300 dark:to-virtualis-gold-400;
+  }
+
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-virtualis-gold-600 to-virtualis-gold-400 dark:from-virtualis-gold-400 dark:to-virtualis-gold-200;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Golden Border Utilities */
+
+  .text-gray-500,
+  .text-gray-400 {
+    color: hsl(var(--text-secondary));
+  }
+
+  .dark .text-gray-500,
+  .dark .text-gray-400 {
+    color: hsl(var(--text-secondary));
+  }
+
+  .border-gray-200,
+  .border-gray-700 {
+    border-color: hsl(var(--border-default));
+  }
+
+  .dark .border-gray-200,
+  .dark .border-gray-700 {
+    border-color: hsl(var(--border-default));
+  }
+
+  .placeholder-gray-400,
+  .placeholder-gray-500 {
+    color: hsl(var(--text-secondary));
+  }
+
+  .text-blue-600,
+  .text-blue-500 {
+    color: hsl(var(--interactive-default));
+  }
+
+  .dark .text-blue-600,
+  .dark .text-blue-500,
+  .dark .text-blue-400 {
+    color: hsl(var(--interactive-default));
+  }
+}
+
+/* Componentes reutilizáveis atualizados */
+@layer components {
+  .btn-primary {
+    @apply relative overflow-hidden bg-gradient-to-r from-blue-600 to-cyan-600 text-white 
+           px-4 py-2 rounded-xl font-medium shadow-lg shadow-blue-500/30 
+           hover:shadow-blue-500/50 hover:scale-[1.02] active:scale-[0.98] 
+           transition-all duration-300 border border-white/10;
+  }
+
+  .btn-secondary {
+    @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 
+           px-4 py-2 rounded-xl font-medium border border-gray-200 dark:border-gray-700
+           hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600
+           transition-all duration-200;
+  }
+
+  .card {
+    @apply glass glass-dark rounded-2xl p-6 transition-all duration-300 hover:shadow-xl;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-900/50 
+           border border-gray-200 dark:border-gray-700 backdrop-blur-sm
+           focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500
+           transition-all duration-300;
+  }
+}
+
+/* Scrollbar Moderno */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-blue-500 dark:bg-blue-500;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
