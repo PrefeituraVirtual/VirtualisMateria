@@ -24,7 +24,7 @@ jobs:
       GENERATE_SOURCEMAP: "false"
       NEXT_PUBLIC_API_URL: "http://209.126.1.173"
       NEXT_PUBLIC_SITE_URL: "https://materiavalparaisodegoias.virtualis.ia.br"
-      NEXT_PUBLIC_BUILD_MODE: "static"
+      NEXT_PUBLIC_BUILD_MODE: "prod"
       NEXT_PUBLIC_ENABLE_AI: "true"
       NEXT_PUBLIC_ENABLE_TRANSCRIPTION: "true"
       NEXT_PUBLIC_ENABLE_ADMIN: "true"
