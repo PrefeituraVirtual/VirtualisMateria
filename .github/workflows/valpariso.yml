@@ -17,7 +17,6 @@ jobs:
     env:
       NODE_ENV: "production"
       NEXT_TELEMETRY_DISABLED: "1"
-      NODE_OPTIONS: "--max_old_space_size=4096"
 
       SKIP_PREFLIGHT_CHECK: "true"
       CI: "false"
@@ -37,21 +36,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-
+          
       - name: Instalando dependências
         run: npm ci
-
-      - name: (debug) Versões e dependências
-        run: |
-          node -v
-          npm -v
-          npx -v
-          npm ls next || true
-          npm ls @cloudflare/next-on-pages || true
-
-      - name: Build do Next
-        run: npm run build
 
       - name: Build Next para Cloudflare Pages (SSR)
         run: npx --yes @cloudflare/next-on-pages@latest --verbose
@@ -61,4 +48,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy .vercel/output/static --project-name=valparaisodegoiascamara --branch main
+          command: pages deploy .vercel/output/static --project-name=materiavalparaisodegoias --branch main
