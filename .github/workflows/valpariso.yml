@@ -41,6 +41,11 @@ jobs:
       - name: Instalando dependências
         run: npm ci
 
+      - name: Check TypeScript installed
+        run: |
+          npm ls typescript
+          node -e "console.log(require('typescript').version)"
+
       - name: Ensure TypeScript present
         run: node -e "require.resolve('typescript')" 2>/dev/null || npm i -D typescript @types/node @types/react @types/react-dom
 
