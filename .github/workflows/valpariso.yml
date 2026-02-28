@@ -18,6 +18,10 @@ jobs:
       NODE_ENV: "production"
       NEXT_TELEMETRY_DISABLED: "1"
 
+      # força instalar devDependencies no npm ci
+      NPM_CONFIG_PRODUCTION: "false"
+      NPM_CONFIG_OMIT: ""
+
       SKIP_PREFLIGHT_CHECK: "true"
       CI: "false"
       GENERATE_SOURCEMAP: "false"
@@ -38,23 +42,11 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Instalando dependências
+      - name: Instalando dependências (inclui devDependencies)
         run: |
-            npm ci --include=dev
-            npm ls typescript
-
-      - name: Check TypeScript installed
-        run: |
+          npm ci --include=dev
           npm ls typescript
           node -e "console.log(require('typescript').version)"
-
-      - name: Ensure TypeScript present
-        run: node -e "require.resolve('typescript')" 2>/dev/null || npm i -D typescript @types/node @types/react @types/react-dom
-
-      - name: Debug build scripts (find next export)
-        run: |
-          node -e "const p=require('./package.json'); console.log('build=', p.scripts?.build); console.log('prebuild=', p.scripts?.prebuild); console.log('postbuild=', p.scripts?.postbuild); console.log('build:static=', p.scripts?.['build:static']);"
-          grep -RIn "next export" package.json . || true
 
       - name: "Build static (Next output: export)"
         run: npm run build
