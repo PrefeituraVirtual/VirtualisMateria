@@ -35,17 +35,13 @@ const nextConfig = {
   // Configuração normal de desenvolvimento
   ...(!isStaticExport && {
     images: {
-      unoptimized: false,
-      remotePatterns: [
-        {
-          protocol: 'http',
-          hostname: 'localhost',
-        },
-        {
-          protocol: 'https',
-          hostname: '**',
-        },
-      ],
+      unoptimized: isStaticExport ? true : false,
+      remotePatterns: isStaticExport
+        ? undefined
+        : [
+          { protocol: 'http', hostname: 'localhost' },
+          { protocol: 'https', hostname: '**' },
+        ],
     },
   }),
 
