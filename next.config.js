@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
+let withBundleAnalyzer = (config) => config;
+
+if (process.env.ANALYZE === 'true') {
+  withBundleAnalyzer = require('@next/bundle-analyzer')({ enabled: true });
+}
 
 // Detectar ambiente
 const isProduction = process.env.NODE_ENV === 'production';
