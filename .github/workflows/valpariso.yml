@@ -38,9 +38,6 @@ jobs:
       - name: Instalando as Dependências
         run: npm ci
 
-      - name: Ativando licença Syncfusion
-        run: npx syncfusion-license activate
-
       - name: Gerando a build
         run: npm run build
 
