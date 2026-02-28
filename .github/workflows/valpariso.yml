@@ -14,16 +14,17 @@ jobs:
   Deploy-Production:
     runs-on: ubuntu-latest
     env:
-      SKIP_PREFLIGHT_CHECK: true
-      CI: false
-      GENERATE_SOURCEMAP: false
-      NEXT_PUBLIC_API_URL=http://209.126.1.173
-      NEXT_PUBLIC_SITE_URL=https://materiavalparaisodegoias.virtualis.ia.br
-      NEXT_PUBLIC_BUILD_MODE=static
-      NODE_ENV=production
-      NEXT_PUBLIC_ENABLE_AI=true
-      NEXT_PUBLIC_ENABLE_TRANSCRIPTION=true
-      NEXT_PUBLIC_ENABLE_ADMIN=true
+      SKIP_PREFLIGHT_CHECK: "true"
+      CI: "false"
+      GENERATE_SOURCEMAP: "false"
+      NEXT_PUBLIC_API_URL: "http://209.126.1.173"
+      NEXT_PUBLIC_SITE_URL: "https://materiavalparaisodegoias.virtualis.ia.br"
+      NEXT_PUBLIC_BUILD_MODE: "static"
+      NODE_ENV: "production"
+      NEXT_PUBLIC_ENABLE_AI: "true"
+      NEXT_PUBLIC_ENABLE_TRANSCRIPTION: "true"
+      NEXT_PUBLIC_ENABLE_ADMIN: "true"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,8 +32,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24.13.0
-          cache: yarn
+          node-version: "24.13.0"
+          cache: "yarn"
 
       - name: Ativar Corepack (Yarn)
         run: corepack enable
