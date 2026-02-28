@@ -36,12 +36,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          
+
       - name: Instalando dependências
         run: npm ci
 
-      - name: Build Next para Cloudflare Pages (SSR)
-        run: npx --yes @cloudflare/next-on-pages@latest --verbose
+      - name: Build (Next)
+        run: npm run build
+
+      - name: Export static (Next -> /out)
+        run: npm run export
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
