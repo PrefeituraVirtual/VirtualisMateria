@@ -40,18 +40,18 @@ jobs:
       - name: Instalando dependências
         run: npm ci
 
-      - name: Ensure TypeScript present (CI safeguard)
-        run: |
-          node -e "require.resolve('typescript')" 2>/dev/null || npm i -D typescript @types/node @types/react @types/react-dom
+      - name: Ensure TypeScript present
+        run: node -e "require.resolve('typescript')" 2>/dev/null || npm i -D typescript @types/node @types/react @types/react-dom
 
-      - name: Debug deps
-        run: |
-          echo "PWD=$(pwd)"
-          npm ls typescript || true
-          npm ls next || true
+      # Aqui NÃO tem next export. Só next build com output: "export".
+      - name: "Build static (Next output: export)"
+        run: npm run build
 
-      - name: Build static (Next -> /out)
-        run: npx next build
+      # Confirma que a pasta out foi gerada
+      - name: Check output folder
+        run: |
+          test -d out
+          ls -la out | head
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
