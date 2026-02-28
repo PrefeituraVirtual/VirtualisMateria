@@ -36,6 +36,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
 
       - name: Instalando dependências
         run: npm ci
@@ -43,11 +44,14 @@ jobs:
       - name: Ensure TypeScript present
         run: node -e "require.resolve('typescript')" 2>/dev/null || npm i -D typescript @types/node @types/react @types/react-dom
 
-      # Aqui NÃO tem next export. Só next build com output: "export".
+      - name: Debug build scripts (find next export)
+        run: |
+          node -e "const p=require('./package.json'); console.log('build=', p.scripts?.build); console.log('prebuild=', p.scripts?.prebuild); console.log('postbuild=', p.scripts?.postbuild); console.log('build:static=', p.scripts?.['build:static']);"
+          grep -RIn "next export" package.json . || true
+
       - name: "Build static (Next output: export)"
         run: npm run build
 
-      # Confirma que a pasta out foi gerada
       - name: Check output folder
         run: |
           test -d out
@@ -58,4 +62,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy .vercel/output/static --project-name=materiavalparaisodegoias --branch main
+          command: pages deploy ./out --project-name=materiavalparaisodegoias --branch main
