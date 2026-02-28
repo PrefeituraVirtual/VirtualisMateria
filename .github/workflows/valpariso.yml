@@ -36,9 +36,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          
+
       - name: Instalando dependências
         run: npm ci
+
+      - name: Ensure TypeScript present (CI safeguard)
+        run: |
+          node -e "require.resolve('typescript')" 2>/dev/null || npm i -D typescript @types/node @types/react @types/react-dom
+
+      - name: Debug deps
+        run: |
+          echo "PWD=$(pwd)"
+          npm ls typescript || true
+          npm ls next || true
 
       - name: Build static (Next -> /out)
         run: npm run build:static
