@@ -50,9 +50,6 @@ jobs:
           npm ls next || true
           npm ls @cloudflare/next-on-pages || true
 
-      - name: Ativando licença Syncfusion
-        run: npx syncfusion-license activate
-
       - name: Build do Next
         run: npm run build
 
