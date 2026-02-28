@@ -39,7 +39,9 @@ jobs:
           cache: "npm"
 
       - name: Instalando dependências
-        run: npm ci
+        run: |
+            npm ci --include=dev
+            npm ls typescript
 
       - name: Check TypeScript installed
         run: |
