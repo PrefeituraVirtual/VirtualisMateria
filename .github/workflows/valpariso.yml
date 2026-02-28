@@ -51,7 +51,7 @@ jobs:
           npm ls next || true
 
       - name: Build static (Next -> /out)
-        run: npm run build:static
+        run: npx next build
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
