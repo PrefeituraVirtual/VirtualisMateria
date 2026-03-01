@@ -33,17 +33,16 @@ const nextConfig = {
 
   output: 'export',
   // Configuração normal de desenvolvimento
-  ...(!isStaticExport && {
-    images: {
-      unoptimized: isStaticExport ? true : false,
-      remotePatterns: isStaticExport
-        ? undefined
-        : [
-          { protocol: 'http', hostname: 'localhost' },
-          { protocol: 'https', hostname: '**' },
-        ],
+  images: isStaticExport
+    ? { unoptimized: true }
+    : {
+      unoptimized: false,
+      remotePatterns: [
+        { protocol: 'http', hostname: 'localhost' },
+        { protocol: 'https', hostname: '**' },
+      ],
     },
-  }),
+
 
   // Variáveis de ambiente públicas
   env: {
