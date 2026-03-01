@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
+let withBundleAnalyzer = (config) => config;
+
+if (process.env.ANALYZE === 'true') {
+  withBundleAnalyzer = require('@next/bundle-analyzer')({ enabled: true });
+}
 
 // Detectar ambiente
 const isProduction = process.env.NODE_ENV === 'production';
@@ -28,30 +30,19 @@ const nextConfig = {
   serverExternalPackages: [],
 
   // Configuração para exportação estática (Cloudflare Pages)
-  ...(isStaticExport && {
-    output: 'export',
-    trailingSlash: true,
-    images: {
-      unoptimized: true,
-    },
-  }),
 
+  output: 'export',
   // Configuração normal de desenvolvimento
-  ...(!isStaticExport && {
-    images: {
+  images: isStaticExport
+    ? { unoptimized: true }
+    : {
       unoptimized: false,
       remotePatterns: [
-        {
-          protocol: 'http',
-          hostname: 'localhost',
-        },
-        {
-          protocol: 'https',
-          hostname: '**',
-        },
+        { protocol: 'http', hostname: 'localhost' },
+        { protocol: 'https', hostname: '**' },
       ],
     },
-  }),
+
 
   // Variáveis de ambiente públicas
   env: {
@@ -62,6 +53,7 @@ const nextConfig = {
   // Rewrites habilitados para resolver problemas de rede/CORS em dev
   // O frontend (port 4001) fará proxy para o backend (port 4000)
   async rewrites() {
+    if (isStaticExport) return []
     return [
       {
         source: '/api/:path*',
@@ -72,6 +64,7 @@ const nextConfig = {
 
   // Headers de segurança
   async headers() {
+    if (isStaticExport) return []
     return [
       {
         source: '/(.*)',
@@ -99,6 +92,7 @@ const nextConfig = {
 
   // Redirecionamentos
   async redirects() {
+    if (isStaticExport) return []
     return [
       {
         source: '/home',
