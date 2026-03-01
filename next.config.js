@@ -50,6 +50,58 @@ const nextConfig = {
     NEXT_PUBLIC_BUILD_MODE: process.env.NEXT_PUBLIC_BUILD_MODE || 'dev',
   },
 
+  // Rewrites habilitados para resolver problemas de rede/CORS em dev
+  // O frontend (port 4001) fará proxy para o backend (port 4000)
+  async rewrites() {
+    if (isStaticExport) return []
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://127.0.0.1:4000/api/:path*',
+      },
+    ];
+  },
+
+  // Headers de segurança
+  async headers() {
+    if (isStaticExport) return []
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+          },
+        ],
+      },
+    ];
+  },
+
+  // Redirecionamentos
+  async redirects() {
+    if (isStaticExport) return []
+    return [
+      {
+        source: '/home',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
+
   // Configuração de webpack
   webpack: (config, { isServer }) => {
     // Otimizações para bundle
