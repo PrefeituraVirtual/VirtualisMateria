@@ -662,6 +662,72 @@ const ResultViewer: React.FC<{
   )
 }
 
+const InfoModal: React.FC<{
+  isOpen: boolean
+  onClose: () => void
+}> = ({ isOpen, onClose }) => {
+  if (!isOpen) return null
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <Info className="h-6 w-6 text-virtualis-blue-600" />
+              Como Funciona
+            </h3>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <X className="h-5 w-5 text-gray-500" />
+            </button>
+          </div>
+          
+          <div className="space-y-4 text-gray-600 dark:text-gray-300">
+            <p>
+              A transcricao de sessoes permite extrair o texto completo de arquivos de audio, video e sessoes do banco de dados utilizando IA.
+            </p>
+            <ul className="space-y-3">
+              <li className="flex gap-3">
+                <Youtube className="h-6 w-6 text-red-500 flex-shrink-0" />
+                <span className="text-sm"><strong>YouTube:</strong> Cole a URL do video e a Virtualis transcreve diretamente. E a opcao mais rapida para videos ja publicados e publicos.</span>
+              </li>
+              <li className="flex gap-3">
+                <Upload className="h-6 w-6 text-blue-500 flex-shrink-0" />
+                <span className="text-sm"><strong>Upload:</strong> Envie arquivos de audio/video do seu computador. Opcional para gravacoes nao publicadas.</span>
+              </li>
+              <li className="flex gap-3">
+                <Database className="h-6 w-6 text-purple-500 flex-shrink-0" />
+                <span className="text-sm"><strong>Sessoes do Banco:</strong> Selecione sessoes ja cadastradas (processadas automaticamente e vinculadas as atas).</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="mt-6 flex justify-end">
+            <Button onClick={onClose} className="w-full sm:w-auto">
+              Entendi
+            </Button>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
 // Main Page Component
 export default function TranscricaoPage() {
   const { user, loading: authLoading } = useAuth()
@@ -692,6 +758,7 @@ export default function TranscricaoPage() {
 
   // UI State
   const [isHistoryOpen, setIsHistoryOpen] = useState(false)
+  const [infoModalOpen, setInfoModalOpen] = useState(false)
 
   // Auth protection
   useEffect(() => {
@@ -994,14 +1061,24 @@ export default function TranscricaoPage() {
               </p>
             </div>
 
-            <Button
-              variant="outline"
-              onClick={fetchJobs}
-              disabled={isLoading}
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-              Atualizar
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setInfoModalOpen(true)}
+                className="text-virtualis-blue-600 border-virtualis-blue-200 hover:bg-virtualis-blue-50 dark:border-virtualis-blue-800 dark:text-virtualis-blue-400 dark:hover:bg-virtualis-blue-900/20"
+              >
+                <Info className="h-4 w-4 mr-2" />
+                Como Funciona
+              </Button>
+              <Button
+                variant="outline"
+                onClick={fetchJobs}
+                disabled={isLoading}
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                Atualizar
+              </Button>
+            </div>
           </div>
 
           {/* Input Section */}
@@ -1086,20 +1163,7 @@ export default function TranscricaoPage() {
             </motion.div>
           )}
 
-          {/* Info Banner */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <div className="flex gap-3">
-              <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-blue-800 dark:text-blue-200">
-                <p className="font-medium">Como funciona:</p>
-                <ul className="mt-1 space-y-1 list-disc list-inside text-blue-700 dark:text-blue-300">
-                  <li><strong>YouTube:</strong> Cole a URL e a Virtualis transcreve diretamente</li>
-                  <li><strong>Upload:</strong> Envie arquivo de audio e a Virtualis processa</li>
-                  <li><strong>Sessoes do Banco:</strong> Selecione sessoes ja cadastradas (processadas automaticamente)</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+
 
           {/* Jobs Section */}
           {/* Jobs Section - Collapsible */}
@@ -1196,6 +1260,12 @@ export default function TranscricaoPage() {
         }}
         jobId={selectedJobForAnalysis?.id || ''}
         jobName={selectedJobForAnalysis?.filename?.replace('youtube:', 'YouTube: ') || 'Transcricao'}
+      />
+
+      {/* Info Modal */}
+      <InfoModal
+        isOpen={infoModalOpen}
+        onClose={() => setInfoModalOpen(false)}
       />
     </>
   )
