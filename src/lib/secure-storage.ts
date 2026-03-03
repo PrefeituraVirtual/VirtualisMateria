@@ -5,7 +5,7 @@
  * Uses Web Crypto API for AES-GCM encryption with session-based keys.
  *
  * Security considerations:
- * - Session key is stored in memory only and lost on page refresh
+ * - Session key is cached in memory and persisted in sessionStorage (survives F5, cleared on tab close)
  * - This provides defense-in-depth against XSS token theft
  * - Not a replacement for HttpOnly cookies for truly sensitive tokens
  * - Adds expiration validation to prevent use of stale tokens
@@ -44,6 +44,7 @@ export interface SecureStorageOptions {
 const STORAGE_VERSION = 1
 const DEFAULT_TTL = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
 const STORAGE_PREFIX = '_secure_'
+const SESSION_KEY_STORAGE = '_secure_session_key'
 
 const isQuotaExceededError = (error: unknown) => {
   if (!error || typeof error !== 'object') return false
@@ -64,8 +65,9 @@ const isQuotaExceededError = (error: unknown) => {
 // ============================================================================
 
 /**
- * In-memory session encryption key
- * Generated fresh on each page load for security
+ * In-memory session encryption key (cache)
+ * Persisted in sessionStorage to survive page refreshes (F5)
+ * Cleared when the tab is closed (sessionStorage behavior)
  */
 let sessionKey: CryptoKey | null = null
 
@@ -81,40 +83,67 @@ function isCryptoAvailable(): boolean {
 }
 
 /**
- * Generates a new session encryption key
- * Called automatically on first use
+ * Gets or creates the session encryption key.
+ * On first call after a page refresh, recovers the key from sessionStorage.
+ * If no key exists (new session), generates one and persists it.
  */
-async function generateSessionKey(): Promise<CryptoKey> {
+async function getSessionKey(): Promise<CryptoKey> {
+  if (sessionKey) return sessionKey
+
   if (!isCryptoAvailable()) {
     throw new Error('Web Crypto API nao disponivel neste navegador.')
   }
 
-  return crypto.subtle.generateKey(
+  // Try to recover key from sessionStorage (survives F5)
+  try {
+    const stored = sessionStorage.getItem(SESSION_KEY_STORAGE)
+    if (stored) {
+      const rawBytes = base64ToArrayBuffer(stored)
+      sessionKey = await crypto.subtle.importKey(
+        'raw',
+        rawBytes,
+        { name: 'AES-GCM' },
+        true, // extractable so we can persist it
+        ['encrypt', 'decrypt']
+      )
+      return sessionKey
+    }
+  } catch {
+    // sessionStorage unavailable or import failed — generate fresh key
+  }
+
+  // Generate new key (extractable so we can export to sessionStorage)
+  sessionKey = await crypto.subtle.generateKey(
     {
       name: 'AES-GCM',
       length: 256,
     },
-    false, // Not extractable for security
+    true, // extractable — needed to persist in sessionStorage
     ['encrypt', 'decrypt']
   )
-}
 
-/**
- * Gets or creates the session encryption key
- */
-async function getSessionKey(): Promise<CryptoKey> {
-  if (!sessionKey) {
-    sessionKey = await generateSessionKey()
+  // Persist raw key bytes in sessionStorage
+  try {
+    const exported = await crypto.subtle.exportKey('raw', sessionKey)
+    sessionStorage.setItem(SESSION_KEY_STORAGE, arrayBufferToBase64(exported))
+  } catch {
+    // If sessionStorage write fails, key still works in-memory for this page load
   }
+
   return sessionKey
 }
 
 /**
- * Clears the session key
+ * Clears the session key from memory and sessionStorage
  * Called on logout or security events
  */
 export function clearSessionKey(): void {
   sessionKey = null
+  try {
+    sessionStorage.removeItem(SESSION_KEY_STORAGE)
+  } catch {
+    // sessionStorage may be unavailable in some contexts
+  }
 }
 
 // ============================================================================
