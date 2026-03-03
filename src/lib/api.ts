@@ -1560,7 +1560,7 @@ export const atasService = {
    * @returns {Promise<Blob>} Blob PDF
    * @throws {ApiError} Erro 401/404 em caso de falha
    */
-  exportPdf: (id: number): Promise<Blob> => api.get<Blob>(`/api/atas/${id}/export/pdf`, {
+  exportPdf: (id: number): Promise<Blob> => api.get<Blob>(`/api/atas/${id}/pdf`, {
     responseType: 'blob'
   }),
 

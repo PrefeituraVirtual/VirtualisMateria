@@ -52,6 +52,9 @@ function PdfViewer({ ataId, onError }: PdfViewerProps) {
 
   // Check if PDF is available before showing iframe
   React.useEffect(() => {
+    // Wait until token is loaded before checking PDF availability
+    if (!token) return
+
     const checkPdfAvailability = async () => {
       try {
         const response = await fetch(pdfUrl, { method: 'HEAD' })
@@ -79,7 +82,7 @@ function PdfViewer({ ataId, onError }: PdfViewerProps) {
 
     setPdfStatus('loading')
     checkPdfAvailability()
-  }, [ataId, pdfUrl, onError])
+  }, [ataId, pdfUrl, token, onError])
 
   const handleRetry = useCallback(() => {
     setPdfStatus('loading')

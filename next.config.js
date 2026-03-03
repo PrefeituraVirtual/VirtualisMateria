@@ -31,8 +31,7 @@ const nextConfig = {
 
   // Configuração para exportação estática (Cloudflare Pages)
 
-  output: 'export',
-  // Configuração normal de desenvolvimento
+  output: isStaticExport ? 'export' : undefined,
   images: isStaticExport
     ? { unoptimized: true }
     : {
