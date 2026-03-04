@@ -50,7 +50,7 @@ export default function ObrasPage() {
 
   const fetchObras = useCallback(async () => {
     try {
-      const response = await axios.get(`/api/works?user_id=${userId}`);
+      const response = await worksService.getAll(userId as number);
       setObras(response.data);
       setLoading(false);
     } catch (error) {
@@ -213,7 +213,7 @@ export default function ObrasPage() {
     setSelectedObra(obra);
     setLoadingInspections(true);
     try {
-      const response = await axios.get(`/api/works/${obra.id}/inspections`);
+      const response = await worksService.getInspections(obra.id!);
       setInspections(response.data as InspectionEntry[]);
     } catch (error) {
       console.error('Erro ao buscar fiscalizações:', error);
