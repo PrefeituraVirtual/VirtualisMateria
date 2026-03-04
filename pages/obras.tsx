@@ -50,7 +50,7 @@ export default function ObrasPage() {
 
   const fetchObras = useCallback(async () => {
     try {
-      const response = await worksService.getAll(userId as number);
+      const response = await worksService.getAll(Number(userId));
       setObras(response.data);
       setLoading(false);
     } catch (error) {
