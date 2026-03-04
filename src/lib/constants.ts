@@ -58,13 +58,15 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
     href: '/',
     requiredGroup: 'materia_chatbot_user',
   },
-  {
-    id: 'painel',
-    label: 'Painel Legislativo',
-    icon: 'BarChart3',
-    href: '/painel',
-    requiredGroup: 'materia_chatbot_user',
-  },
+  // TODO: Painel Legislativo desabilitado temporariamente — contém dados mockados.
+  // Reativar quando os dados de sessão/pauta estiverem reais.
+  // {
+  //   id: 'painel',
+  //   label: 'Painel Legislativo',
+  //   icon: 'BarChart3',
+  //   href: '/painel',
+  //   requiredGroup: 'materia_chatbot_user',
+  // },
   {
     id: 'chatbot',
     label: 'Chatbot IA',
