@@ -50,8 +50,8 @@ export default function ObrasPage() {
 
   const fetchObras = useCallback(async () => {
     try {
-      const response = await worksService.getAll(Number(userId));
-      setObras(response.data);
+      const data = await worksService.getAll(Number(userId));
+      setObras(data as unknown as Obra[]);
       setLoading(false);
     } catch (error) {
       console.error('Erro ao buscar obras:', error);
@@ -213,8 +213,8 @@ export default function ObrasPage() {
     setSelectedObra(obra);
     setLoadingInspections(true);
     try {
-      const response = await worksService.getInspections(obra.id!);
-      setInspections(response.data as InspectionEntry[]);
+      const data = await worksService.getInspections(obra.id!);
+      setInspections(data as unknown as InspectionEntry[]);
     } catch (error) {
       console.error('Erro ao buscar fiscalizações:', error);
     } finally {
