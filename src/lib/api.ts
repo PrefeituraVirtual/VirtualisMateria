@@ -1602,7 +1602,7 @@ export const atasService = {
   }> => {
     // Use direct backend URL to bypass Next.js proxy timeout (60s default)
     // Ata generation can take 30-40s, which may timeout through proxy
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000'
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
     const token = api.getAuthToken()
 
     const response = await axios.post(
@@ -1766,7 +1766,7 @@ export const transcriptionService = {
     if (idSessao) formData.append('id_sessao', idSessao.toString())
 
     // Usar URL direta do backend para evitar limite de 10MB do proxy Next.js
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000'
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
     // Use cached token from api client instead of direct localStorage access
     const token = api.getAuthToken()
 
@@ -1955,7 +1955,7 @@ export const transcriptionService = {
     jobId: string,
     options: AnalyzeTranscriptionOptions = {}
   ): Promise<{ success: boolean; data: TranscriptionAnalysis }> => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000'
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
     // Use cached token from api client instead of direct localStorage access
     const token = api.getAuthToken()
 
