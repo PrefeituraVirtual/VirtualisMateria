@@ -2,7 +2,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'premium'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'premium' | 'ai'
   size?: 'sm' | 'md' | 'lg'
   isLoading?: boolean
   loadingText?: string
@@ -46,6 +46,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       outline: 'border-2 border-blue-500/50 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-virtualis-gold-500/50 hover:text-virtualis-gold-600 dark:hover:text-virtualis-gold-400',
       ghost: 'text-gray-700 dark:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 hover:text-virtualis-gold-600 dark:hover:text-virtualis-gold-400',
       danger: 'bg-gradient-to-r from-red-600 to-pink-600 text-white shadow-lg shadow-red-500/25 hover:shadow-red-500/40 hover:scale-[1.02]',
+      ai: 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] active:scale-[0.98] border border-white/10',
     }
     
     const sizes = {

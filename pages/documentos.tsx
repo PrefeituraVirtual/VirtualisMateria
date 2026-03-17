@@ -1,9 +1,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
-import Head from 'next/head'
 import { MainLayout } from '@/components/layout/MainLayout'
+import { SEOHead } from '@/components/common/SEOHead'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
+import { Modal, ModalHeader, ModalTitle, ModalDescription, ModalFooter } from '@/components/ui/Modal'
 import {
   RefreshCw, Loader2, FileStack, Sparkles, FileText, Plus, ChevronLeft, ChevronRight,
   Download, Trash2, FileQuestion, Award, FileBarChart, File
@@ -39,6 +41,7 @@ interface DocumentsResponse {
 export default function DocumentosPage() {
   const [documents, setDocuments] = useState<Document[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null)
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -76,8 +79,6 @@ export default function DocumentosPage() {
 
   const handleDownload = async (doc: Document) => {
     try {
-      // Use window.open for direct download handling by browser or fetch blob if auth needed
-      // Since our API is protected, we need to fetch with auth token then create blob
       const response = await api.get<Blob>(`/api/documents/${doc.id}/download`, {
         responseType: 'blob'
       })
@@ -100,15 +101,17 @@ export default function DocumentosPage() {
     }
   }
 
-  const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Tem certeza que deseja excluir "${title}"? esta ação não pode ser desfeita.`)) {
-      return
-    }
+  const handleDelete = (id: string, title: string) => {
+    setDeleteTarget({ id, title })
+  }
 
+  const confirmDelete = async () => {
+    if (!deleteTarget) return
     try {
-      await api.delete(`/api/documents/${id}`)
+      await api.delete(`/api/documents/${deleteTarget.id}`)
       toast.success('Documento excluído com sucesso')
-      fetchDocuments() // Refresh list
+      setDeleteTarget(null)
+      fetchDocuments()
     } catch (error) {
       console.error('Error deleting:', error)
       toast.error('Erro ao excluir documento')
@@ -126,13 +129,11 @@ export default function DocumentosPage() {
 
   return (
     <MainLayout>
-      <Head>
-        <title>Meus Documentos - Materia Virtualis</title>
-      </Head>
+      <SEOHead title="Meus Documentos" description="Gerencie e organize seus documentos gerados pela IA e arquivos salvos." />
 
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">
             Meus Documentos
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -175,7 +176,7 @@ export default function DocumentosPage() {
                   Se você procura seus <strong>Projetos de Lei</strong> em tramitação, eles estão na área de Matérias.
                 </p>
                 <div className="flex flex-col gap-3 justify-center sm:flex-row flex-wrap">
-                  <Button onClick={() => window.location.href = '/chatbot'} className="bg-purple-600 hover:bg-purple-700 text-white">
+                  <Button onClick={() => window.location.href = '/chatbot'} variant="ai">
                     <Sparkles className="h-4 w-4 mr-2" />
                     Gerar com Inteligência Artificial
                   </Button>
@@ -222,9 +223,7 @@ export default function DocumentosPage() {
                             </div>
                           </td>
                           <td className="px-4 py-3">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
-                              {doc.type}
-                            </span>
+                            <Badge variant="default" size="sm">{doc.type}</Badge>
                           </td>
                           <td className="px-4 py-3 text-gray-600 dark:text-gray-400">
                             {formatDate(doc.created_at)}
@@ -290,6 +289,19 @@ export default function DocumentosPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Modal isOpen={!!deleteTarget} onClose={() => setDeleteTarget(null)}>
+        <ModalHeader>
+          <ModalTitle>Excluir documento</ModalTitle>
+          <ModalDescription>
+            Tem certeza que deseja excluir &quot;{deleteTarget?.title}&quot;? Esta ação não pode ser desfeita.
+          </ModalDescription>
+        </ModalHeader>
+        <ModalFooter>
+          <Button variant="outline" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+          <Button variant="danger" onClick={confirmDelete}>Excluir</Button>
+        </ModalFooter>
+      </Modal>
     </MainLayout>
   )
 }

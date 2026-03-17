@@ -18,10 +18,8 @@ export function MainLayout({ children }: MainLayoutProps) {
     return false
   })
 
-  // Call hook at the top level of the component
   const { loading, user } = useAuth()
 
-  // Salvar estado do sidebar no localStorage
   React.useEffect(() => {
     localStorage.setItem('sidebarCollapsed', JSON.stringify(sidebarCollapsed))
   }, [sidebarCollapsed])
@@ -78,10 +76,10 @@ export function MainLayout({ children }: MainLayoutProps) {
         />
       </div>
 
-      <div className={`transition-all duration-300 ease-in-out min-h-screen print:pl-0 ${
+      <div className={`transition-all duration-300 ease-in-out h-screen flex flex-col overflow-hidden print:pl-0 ${
         sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-72'
       }`}>
-        <div className="print:hidden">
+        <div className="print:hidden flex-shrink-0">
           <Header
             onMenuClick={() => setSidebarOpen(true)}
             onSidebarToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -89,7 +87,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           />
         </div>
 
-        <main id="main-content" role="main" className="p-4 lg:p-6 animate-fade-in print:p-0">
+        <main id="main-content" role="main" className="flex-1 overflow-y-auto p-4 lg:p-6 animate-fade-in print:p-0">
           {children}
         </main>
       </div>
