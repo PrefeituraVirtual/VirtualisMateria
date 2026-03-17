@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Input, Textarea } from '@/components/ui/Input'
 import { CharacterCounter } from '@/components/ui/CharacterCounter'
 import { Modal, ModalHeader, ModalTitle, ModalDescription, ModalFooter } from '@/components/ui/Modal'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select'
 import {
   ChevronLeft, ChevronRight, Sparkles, AlertTriangle, Gavel, Briefcase, Users,
   Edit2, Trash2, Clock, MapPin, CalendarX, AlertCircle
@@ -35,7 +36,6 @@ import {
 } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
-// --- TYPES ---
 type EventType = 'SESSAO' | 'COMISSAO' | 'AUDIENCIA' | 'PRAZO' | 'GABINETE' | 'EXTERNO'
 
 interface CalendarEvent {
@@ -48,19 +48,15 @@ interface CalendarEvent {
   description?: string
 }
 
-// --- INITIAL MOCK DATA ---
 export default function AgendaPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   
-  // State
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [activeFilter, setActiveFilter] = useState<'all' | 'sessions' | 'deadlines'>('all')
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [isAssistantOpen, setIsAssistantOpen] = useState(false)
-  
-  // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingEventId, setEditingEventId] = useState<number | null>(null)
   const [newEvent, setNewEvent] = useState<{
@@ -80,14 +76,12 @@ export default function AgendaPage() {
   })
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
-  // Auth Protection
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/auth/login')
     }
   }, [user, authLoading, router])
 
-  // Fetch Events from API
   const fetchEvents = async () => {
     try {
       const response = await agendaService.getAll()
@@ -130,7 +124,6 @@ export default function AgendaPage() {
     )
   }
 
-  // --- HELPERS ---
   const getEventStyles = (type: EventType) => {
     switch (type) {
       case 'SESSAO':
@@ -195,7 +188,6 @@ export default function AgendaPage() {
     )
   }
 
-  // --- HANDLERS ---
   const handleAddEvent = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -243,7 +235,6 @@ export default function AgendaPage() {
 
     try {
         if (editingEventId) {
-            // UPDATE
             await agendaService.update(editingEventId, agendaPayload)
             
             setEvents(prev => prev.map(e => {
@@ -262,10 +253,7 @@ export default function AgendaPage() {
             }))
             toast.success('Evento atualizado com sucesso!')
         } else {
-            // CREATE
             const createdEvent = await agendaService.create(agendaPayload)
-            
-            // Optimistically update or re-fetch. Here we just add to state manually for speed.
             const eventConfig: CalendarEvent = {
                 id: createdEvent.data?.id || Date.now(),
                 title: sanitizedEvent.title,
@@ -326,7 +314,6 @@ export default function AgendaPage() {
     setIsModalOpen(true)
   }
 
-  // --- RENDERERS ---
   const renderHeader = () => {
     return (
       <div className="flex items-center justify-between mb-6">
@@ -388,14 +375,24 @@ export default function AgendaPage() {
             return (
                 <div
                 key={day.toString()}
+                role="button"
+                tabIndex={0}
+                aria-label={`${format(day, "d 'de' MMMM", { locale: ptBR })}${dayEvents.length > 0 ? `, ${dayEvents.length} evento${dayEvents.length > 1 ? 's' : ''}` : ''}`}
+                aria-pressed={isSelected}
                 className={`min-h-[100px] p-2 rounded-lg border transition-all cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                    isSelected 
-                    ? 'border-blue-500 ring-1 ring-blue-500 bg-blue-50 dark:bg-blue-900/10' 
+                    isSelected
+                    ? 'border-blue-500 ring-1 ring-blue-500 bg-blue-50 dark:bg-blue-900/10'
                     : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900'
                 } ${
                     !isCurrentMonth ? 'opacity-40' : ''
                 }`}
                 onClick={() => setSelectedDate(day)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setSelectedDate(day)
+                    }
+                }}
                 >
                 <div className="flex justify-between items-center mb-1">
                     <span className={`text-sm font-medium h-7 w-7 flex items-center justify-center rounded-full ${
@@ -412,15 +409,15 @@ export default function AgendaPage() {
                 
                 <div className="space-y-1 mt-2">
                     {dayEvents.slice(0, 3).map((event, i) => (
-                    <div 
-                        key={i} 
-                        className={`text-[10px] px-1.5 py-0.5 rounded truncate border ${getEventStyles(event.type)}`}
+                    <div
+                        key={i}
+                        className={`text-xs px-1.5 py-0.5 rounded truncate border ${getEventStyles(event.type)}`}
                     >
                         {event.time} {event.title}
                     </div>
                     ))}
                     {dayEvents.length > 3 && (
-                    <div className="text-[10px] text-gray-400 text-center">
+                    <div className="text-xs text-gray-400 text-center">
                         +{dayEvents.length - 3} mais
                     </div>
                     )}
@@ -474,10 +471,10 @@ export default function AgendaPage() {
                 Prazos Fatais
             </Button>
 
-            <Button 
-                variant="premium"
+            <Button
+                variant="ai"
+                className="gap-2"
                 onClick={() => setIsAssistantOpen(true)}
-                className="gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-0"
             >
                 <Sparkles className="h-4 w-4" />
                 Agendar com IA
@@ -492,7 +489,7 @@ export default function AgendaPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Calendar View (2/3) */}
-            <Card className="lg:col-span-2 border-0 shadow-sm min-h-[600px]">
+            <Card className="lg:col-span-2 min-h-[600px]">
               <CardContent className="p-6">
                 {renderHeader()}
                 {renderCells()}
@@ -527,7 +524,7 @@ export default function AgendaPage() {
                           <div>
                             <div className="flex items-center gap-2">
                                 <h4 className="font-semibold text-gray-900 dark:text-gray-100">{event.title}</h4>
-                                <Badge variant="outline" className="text-[10px] h-5 px-1">{getEventLabel(event.type)}</Badge>
+                                <Badge variant="outline" className="text-xs h-5 px-1">{getEventLabel(event.type)}</Badge>
                                 <div className="ml-auto flex gap-1">
                                     <Button 
                                         variant="ghost" 
@@ -602,7 +599,7 @@ export default function AgendaPage() {
                       .sort((a, b) => a.date.getTime() - b.date.getTime())
                       .slice(0, 3)
                       .map(deadline => (
-                        <div key={deadline.id} className="bg-white dark:bg-gray-900 p-3 rounded-lg border border-red-100 dark:border-red-900/20 shadow-sm">
+                        <div key={deadline.id} className="bg-white dark:bg-gray-900 p-3 rounded-lg border border-red-100 dark:border-red-900/20">
                           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{deadline.title}</p>
                           <p className="text-xs text-red-600 font-medium mt-1">
                             Vence {format(deadline.date, "dd/MM 'às' HH:mm")}
@@ -646,22 +643,27 @@ export default function AgendaPage() {
             
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
-                    <select
-                        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-700"
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo *</label>
+                    <Select
                         value={newEvent.type}
-                        onChange={(e) => {
-                          setNewEvent({ ...newEvent, type: e.target.value as EventType })
-                          clearFieldError('type')
+                        onValueChange={(val) => {
+                            setNewEvent({ ...newEvent, type: val as EventType })
+                            clearFieldError('type')
                         }}
+                        aria-label="Tipo de evento"
                     >
-                        <option value="GABINETE">Gabinete (Interno)</option>
-                        <option value="SESSAO">Sessão Plenária</option>
-                        <option value="COMISSAO">Comissão</option>
-                        <option value="AUDIENCIA">Audiência Pública</option>
-                        <option value="PRAZO">Prazo Regimental</option>
-                        <option value="EXTERNO">Visita Externa</option>
-                    </select>
+                        <SelectTrigger>
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="GABINETE">Gabinete (Interno)</SelectItem>
+                            <SelectItem value="SESSAO">Sessão Plenária</SelectItem>
+                            <SelectItem value="COMISSAO">Comissão</SelectItem>
+                            <SelectItem value="AUDIENCIA">Audiência Pública</SelectItem>
+                            <SelectItem value="PRAZO">Prazo Regimental</SelectItem>
+                            <SelectItem value="EXTERNO">Visita Externa</SelectItem>
+                        </SelectContent>
+                    </Select>
                     {fieldErrors.type && (
                       <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
                         <AlertCircle className="h-3 w-3" aria-hidden="true" />

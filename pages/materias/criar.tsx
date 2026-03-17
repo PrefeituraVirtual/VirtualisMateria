@@ -8,6 +8,7 @@ import { Input, Textarea } from '@/components/ui/Input'
 import { ArrowLeft, Search, Lightbulb, BrainCircuit, Sparkles, ArrowRight, FileText, AlertCircle } from 'lucide-react'
 import { MATERIA_TYPES } from '@/lib/constants'
 import { materiasService } from '@/lib/api'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select'
 import { generateLegislativeSuggestion } from '@/lib/ai-service'
 import toast from 'react-hot-toast'
 import { materiaCreateSchema, materiaCreateFinalSchema, getZodErrors, MAX_TEMA_LENGTH, MAX_EMENTA_LENGTH, MAX_ASSUNTO_LENGTH } from '@/lib/validation'
@@ -29,10 +30,8 @@ export default function CriarMateriaPage() {
   const [loadingText, setLoadingText] = useState('Processando...')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
-  // CSRF token for form protection
   const { token: csrfToken } = useCSRFToken()
 
-  // Validar campos do step 1
   const validateStep1 = (): boolean => {
     try {
       materiaCreateSchema.pick({ tipo: true, tema: true }).parse({
@@ -49,7 +48,6 @@ export default function CriarMateriaPage() {
     }
   }
 
-  // Validar campos do step 3 (ementa obrigatoria)
   const validateStep3 = (): boolean => {
     try {
       materiaCreateFinalSchema.parse(formData)
@@ -64,7 +62,6 @@ export default function CriarMateriaPage() {
   }
 
   const handleSearchTemplates = async () => {
-    // Validar step 1 antes de continuar
     if (!validateStep1()) {
       toast.error('Por favor, corrija os erros no formulario')
       return
@@ -94,7 +91,6 @@ export default function CriarMateriaPage() {
     setIsSuggesting(true)
     setLoadingText('Conectando ao servidor de IA...')
 
-    // Define progress stages for user feedback
     const progressStages = [
       'Analisando o tema e contexto...',
       'Consultando legislacao existente...',
@@ -141,7 +137,6 @@ export default function CriarMateriaPage() {
     } catch (error: any) {
       console.error('Error getting AI suggestions:', error)
 
-      // Provide helpful error messages based on error type
       const errorMessage = error.message || 'Erro desconhecido'
 
       if (errorMessage.includes('tempo limite') || errorMessage.includes('timeout')) {
@@ -172,14 +167,12 @@ export default function CriarMateriaPage() {
   }, [formData.tema, formData.tipo])
 
   const handleCreateMateria = async () => {
-    // Validar step 3 (ementa obrigatoria)
     if (!validateStep3()) {
       toast.error('Por favor, corrija os erros no formulario')
       return
     }
 
     try {
-      // Include CSRF token in request
       const dataWithCsrf = {
         ...formData,
         _csrf: csrfToken
@@ -267,17 +260,18 @@ export default function CriarMateriaPage() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Tipo de Matéria *
                   </label>
-                  <select
+                  <Select
                     value={formData.tipo}
-                    onChange={(e) => setFormData({ ...formData, tipo: e.target.value as typeof formData.tipo })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-virtualis-blue-500"
+                    onValueChange={(val) => setFormData({ ...formData, tipo: val as typeof formData.tipo })}
+                    aria-label="Tipo de matéria"
                   >
-                    {Object.entries(MATERIA_TYPES).map(([key, value]) => (
-                      <option key={key} value={key}>
-                        {value.label}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(MATERIA_TYPES).map(([key, value]) => (
+                        <SelectItem key={key} value={key}>{value.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div>
@@ -375,10 +369,9 @@ export default function CriarMateriaPage() {
                     Voltar
                   </Button>
                   <Button
-                    variant="secondary"
+                    variant="ai"
                     onClick={handleSuggestDetails}
                     disabled={isSuggesting}
-                    className="bg-purple-100 text-purple-700 hover:bg-purple-200 border-purple-200"
                   >
                     {isSuggesting ? (
                       <span className="flex items-center">

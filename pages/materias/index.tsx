@@ -13,6 +13,7 @@ import { formatDate } from '@/lib/utils'
 import { materiasService } from '@/lib/api'
 import toast from 'react-hot-toast'
 import { Modal, ModalHeader, ModalFooter, ModalTitle, ModalDescription } from '@/components/ui/Modal'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select'
 
 export default function MateriasPage() {
   const router = useRouter()
@@ -23,12 +24,10 @@ export default function MateriasPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null)
   
-  // Pagination State
   const [page, setPage] = useState(1)
   const [limit] = useState(10)
   const [totalCount, setTotalCount] = useState(0)
 
-  // State for delete modal
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [materiaToDelete, setMateriaToDelete] = useState<string | null>(null)
 
@@ -52,7 +51,6 @@ export default function MateriasPage() {
     }
   }, [filterType, filterStatus, page, limit])
 
-  // Reset page when filters change
   useEffect(() => {
     setPage(1)
   }, [filterType, filterStatus])
@@ -69,7 +67,7 @@ export default function MateriasPage() {
   const confirmDelete = (id: string) => {
     setMateriaToDelete(id)
     setDeleteModalOpen(true)
-    setActiveMenuId(null) // Close the dropdown
+    setActiveMenuId(null)
   }
 
   const handleDelete = async () => {
@@ -78,7 +76,7 @@ export default function MateriasPage() {
     try {
       await materiasService.delete(materiaToDelete)
       toast.success('Matéria excluída com sucesso')
-      loadMaterias() // Refresh list
+      loadMaterias()
     } catch (error) {
       console.error('Error deleting materia:', error)
       toast.error('Erro ao excluir matéria')
@@ -110,7 +108,6 @@ export default function MateriasPage() {
 
       <MainLayout>
         <div className="max-w-7xl mx-auto space-y-6">
-          {/* ... existing header and filters ... */}
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b-0 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-virtualis-gold-500/50 after:to-transparent">
             <div>
@@ -139,30 +136,26 @@ export default function MateriasPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   icon={<Search className="h-5 w-5 text-gray-400" />}
                 />
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-virtualis-blue-500"
-                >
-                  <option value="all">Todos os tipos</option>
-                  {Object.entries(MATERIA_TYPES).map(([key, value]) => (
-                    <option key={key} value={key}>
-                      {value.label}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-virtualis-blue-500"
-                >
-                  <option value="all">Todos os status</option>
-                  <option value="draft">Rascunho</option>
-                  <option value="em_tramitacao">Em Tramitação</option>
-                  <option value="aprovado">Aprovado</option>
-                  <option value="rejeitado">Rejeitado</option>
-                  <option value="arquivado">Arquivado</option>
-                </select>
+                <Select value={filterType} onValueChange={setFilterType} aria-label="Filtrar por tipo">
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os tipos</SelectItem>
+                    {Object.entries(MATERIA_TYPES).map(([key, value]) => (
+                      <SelectItem key={key} value={key}>{value.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={filterStatus} onValueChange={setFilterStatus} aria-label="Filtrar por status">
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os status</SelectItem>
+                    <SelectItem value="draft">Rascunho</SelectItem>
+                    <SelectItem value="em_tramitacao">Em Tramitação</SelectItem>
+                    <SelectItem value="aprovado">Aprovado</SelectItem>
+                    <SelectItem value="rejeitado">Rejeitado</SelectItem>
+                    <SelectItem value="arquivado">Arquivado</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
@@ -324,10 +317,7 @@ export default function MateriasPage() {
             <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
               Cancelar
             </Button>
-            <Button 
-              className="bg-red-600 hover:bg-red-700 text-white focus:ring-red-500" 
-              onClick={handleDelete}
-            >
+            <Button variant="danger" onClick={handleDelete}>
               Excluir Matéria
             </Button>
           </ModalFooter>

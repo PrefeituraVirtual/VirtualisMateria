@@ -111,7 +111,7 @@ function SidebarComponent({ isOpen, collapsed, onClose, onToggleCollapse: _onTog
       >
         <div className="flex flex-col h-full">
           {/* Header do Sidebar */}
-          <div className="flex items-center justify-between h-16 border-b border-gray-200 dark:border-gray-800 px-2 lg:px-6">
+          <div className="flex items-center justify-between h-16 border-b-0 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-virtualis-gold-500/50 after:to-transparent px-2 lg:px-6">
             {/* Logo */}
             <div className="flex items-center justify-center flex-1">
               {collapsed ? (
@@ -232,7 +232,7 @@ function SidebarComponent({ isOpen, collapsed, onClose, onToggleCollapse: _onTog
           </nav>
 
           {/* Footer do Sidebar */}
-          <div className="p-2 lg:p-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="p-2 lg:p-4 border-t-0 relative before:absolute before:top-0 before:left-0 before:w-full before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-virtualis-gold-500/50 before:to-transparent">
             {!collapsed ? (
               <div className="text-xs text-center text-gray-500 dark:text-gray-400">
                 Materia Virtualis v1.0

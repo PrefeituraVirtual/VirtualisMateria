@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react'
-import Head from 'next/head'
 import { MainLayout } from '@/components/layout/MainLayout'
+import { SEOHead } from '@/components/common/SEOHead'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription as _CardDescription } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { Textarea } from '@/components/ui/Textarea'
 import { Badge } from '@/components/ui/Badge'
 import { useAuth } from '@/hooks/useAuth'
 import { authService } from '@/lib/api'
@@ -16,14 +17,12 @@ export default function PerfilPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
 
-  // Local state for form fields
   const [formData, setFormData] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
     bio: user?.bio || 'Vereador atuante na área de saúde e educação.',
   })
 
-  // Update effect when user loads
   React.useEffect(() => {
     if (user) {
         setFormData(prev => ({
@@ -45,16 +44,14 @@ export default function PerfilPage() {
 
     setUploading(true)
     
-    // Convert to Base64
     const reader = new FileReader()
     reader.onloadend = async () => {
       const base64String = reader.result as string
       try {
         await authService.updateProfile({ avatar: base64String })
         
-        // Refresh user data via hook
         await refreshUser()
-        
+
         toast.success('Foto de perfil atualizada!')
       } catch (error) {
         toast.error('Erro ao atualizar foto')
@@ -74,7 +71,6 @@ export default function PerfilPage() {
           bio: formData.bio
         })
         
-        // Refresh user data via hook
         await refreshUser()
 
         setIsEditing(false)
@@ -103,10 +99,7 @@ export default function PerfilPage() {
 
   return (
     <>
-      <Head>
-        <title>Meu Perfil - Materia Virtualis</title>
-      </Head>
-
+      <SEOHead title="Meu Perfil" description="Gerencie suas informações pessoais e de conta." />
       <MainLayout>
         <div className="max-w-4xl mx-auto space-y-6">
           
@@ -213,9 +206,8 @@ export default function PerfilPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bio / Notas</label>
-                    <textarea 
-                      className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                    <Textarea
+                      label="Bio / Notas"
                       value={formData.bio}
                       disabled={!isEditing}
                       onChange={(e) => setFormData({...formData, bio: e.target.value})}

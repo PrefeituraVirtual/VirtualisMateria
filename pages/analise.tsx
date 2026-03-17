@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import Head from 'next/head'
 import { MainLayout } from '@/components/layout/MainLayout'
+import { SEOHead } from '@/components/common/SEOHead'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { DeepSeekAnalysis, AnalysisResult } from '@/components/ai/DeepSeekAnalysis'
@@ -18,13 +18,11 @@ export default function AnalisePage() {
   const [currentAnalysis, setCurrentAnalysis] = useState<AnalysisResult | null>(null)
   const [recentAnalyses, setRecentAnalyses] = useState<AnalysisResult[]>([])
 
-  // Cache hook
   const { getCacheStats, getTopEntries, clear } = useDeepSeekCache({
     maxSize: 50,
     maxAge: 24
   })
 
-  // Notifications hook
   const {
     requestNotificationPermission,
     notificationPermission
@@ -34,13 +32,11 @@ export default function AnalisePage() {
     sound: true
   })
 
-  // Request notification permission on mount
   React.useEffect(() => {
     if (notificationPermission === 'default') {
       requestNotificationPermission()
     }
 
-    // Load recent analyses from cache
     const topEntries = getTopEntries(5)
     setRecentAnalyses(topEntries.map(entry => entry.entry.result))
   }, [notificationPermission, requestNotificationPermission, getTopEntries])
@@ -74,16 +70,12 @@ export default function AnalisePage() {
 
   return (
     <>
-      <Head>
-        <title>Análise IA Avançada - Materia Virtualis</title>
-        <meta name="description" content="Análise legislativa avançada com Virtualis" />
-      </Head>
-
+      <SEOHead title="Análise IA Avançada" description="Análise legislativa avançada com Virtualis" />
       <MainLayout>
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Header */}
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
               <div className="p-3 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl">
                 <Brain className="h-8 w-8 text-white" />
               </div>
@@ -382,8 +374,8 @@ export default function AnalisePage() {
                     )}
 
                     {notificationPermission === 'granted' && (
-                      <p className="text-xs text-green-600 dark:text-green-400">
-                        ✓ Notificações ativadas para análises longas
+                      <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                        <Check className="h-3 w-3" aria-hidden="true" /> Notificações ativadas para análises longas
                       </p>
                     )}
                   </div>
