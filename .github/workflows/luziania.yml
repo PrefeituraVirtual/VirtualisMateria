@@ -1,0 +1,61 @@
+name: Luziânia
+
+concurrency:
+  group: luzianiadegoias
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Deploy-Production:
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: "production"
+      NEXT_TELEMETRY_DISABLED: "1"
+
+      # força instalar devDependencies no npm ci
+      NPM_CONFIG_PRODUCTION: "false"
+      NPM_CONFIG_OMIT: ""
+
+      SKIP_PREFLIGHT_CHECK: "true"
+      CI: "false"
+      GENERATE_SOURCEMAP: "false"
+      NEXT_PUBLIC_API_URL: "https://apimateria.luziania.virtualis.ia.br"
+      NEXT_PUBLIC_SITE_URL: "https://materia.luziania.virtualis.ia.br"
+      NEXT_PUBLIC_BUILD_MODE: "static"
+      NEXT_PUBLIC_ENABLE_AI: "true"
+      NEXT_PUBLIC_ENABLE_TRANSCRIPTION: "true"
+      NEXT_PUBLIC_ENABLE_ADMIN: "true"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Instalando dependências (inclui devDependencies)
+        run: |
+          npm ci --include=dev
+          npm ls typescript
+          node -e "console.log(require('typescript').version)"
+
+      - name: "Build static (Next output: export)"
+        run: npm run build
+
+      - name: Check output folder
+        run: |
+          test -d out
+          ls -la out | head
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ./out --project-name=materialuziania --branch main
