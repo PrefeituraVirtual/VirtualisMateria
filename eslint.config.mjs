@@ -114,7 +114,7 @@ export default [
 
       // General rules
       'prefer-const': 'off',
-      'no-console': 'off',
+      'no-console': ['warn', { allow: ['error', 'warn'] }],
     },
     settings: {
       react: {

@@ -42,15 +42,13 @@ export function useAuth() {
       if (isAuth) {
         // Try to get user from secure storage first
         const secureUserData = await getSecureItem<User>(USER_DATA_KEY)
-        console.log('[useAuth] Secure storage user:', secureUserData);
-        
+
         if (secureUserData && isUser(secureUserData)) {
           setUser(secureUserData)
         } else {
           // Fallback to cached memory user (Critical for SPA transitions)
           const memoryUser = authService.getUser();
-          console.log('[useAuth] Memory cached user:', memoryUser);
-          
+
           if (isUser(memoryUser)) {
             setUser(memoryUser)
             // Attempt to restore to secure storage

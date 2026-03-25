@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { SEOHead } from '@/components/common/SEOHead'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -13,6 +13,7 @@ import { MATERIA_TYPES } from '@/lib/constants'
 import { materiasService, deepSeekService, api } from '@/lib/api'
 import { getSecureItem } from '@/lib/secure-storage'
 import { formatDate } from '@/lib/utils'
+import { sanitizeHtml } from '@/lib/markdown-sanitizer'
 import { AnalysisResult } from '@/components/ai/DeepSeekAnalysis'
 import { useDeepSeekCache } from '@/hooks/useDeepSeekCache'
 import toast from 'react-hot-toast'
@@ -39,11 +40,14 @@ function stripMarkdown(text: string): string {
 /**
  * Call AI analyze endpoint directly (bypasses Next.js proxy for deep mode)
  */
-async function analyzeDirectBackend(query: string, mode: 'fast' | 'deep', contextData?: any): Promise<any> {
-  // Use cached token (same as search requests) with secure storage as fallback
+async function analyzeDirectBackend(query: string, mode: 'fast' | 'deep', contextData?: any, externalSignal?: AbortSignal): Promise<any> {
   const token = api.getCachedToken() || (typeof window !== 'undefined' ? await getSecureItem<string>('authToken') : null)
   const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 180000) // 3 minutes
+  const timeoutId = setTimeout(() => controller.abort(), 180000)
+
+  const signal = externalSignal
+    ? AbortSignal.any([controller.signal, externalSignal])
+    : controller.signal
 
   try {
     const response = await fetch(`${BACKEND_URL}/api/ai/analyze`, {
@@ -53,7 +57,7 @@ async function analyzeDirectBackend(query: string, mode: 'fast' | 'deep', contex
         ...(token && { 'Authorization': `Bearer ${token}` })
       },
       body: JSON.stringify({ query, mode, contextData }),
-      signal: controller.signal
+      signal,
     })
 
     clearTimeout(timeoutId)
@@ -92,10 +96,27 @@ export default function BibliotecaPage() {
     totalPages: 0
   })
 
-  // Cache hook
+  const isMounted = useRef(true)
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current)
+        progressIntervalRef.current = null
+      }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+        abortControllerRef.current = null
+      }
+    }
+  }, [])
+
   const { get: getCachedAnalysis, set: setCachedAnalysis } = useDeepSeekCache({
     maxSize: 20,
-    maxAge: 24 // 24 horas
+    maxAge: 24
   })
 
   const handleSemanticSearch = async (overrideQuery?: string, targetPage: number = 1) => {
@@ -204,9 +225,8 @@ export default function BibliotecaPage() {
           { progress: 90, step: 'Formatando resultados...' },
         ]
 
-    // Simular progresso em paralelo com a requisição
     let stepIndex = 0
-    const progressInterval = setInterval(() => {
+    progressIntervalRef.current = setInterval(() => {
       if (stepIndex < steps.length) {
         setAnalysisProgress(steps[stepIndex].progress)
         setAnalysisStep(steps[stepIndex].step)
@@ -214,8 +234,9 @@ export default function BibliotecaPage() {
       }
     }, analysisMode === 'deep' ? 4000 : 1500)
 
+    abortControllerRef.current = new AbortController()
+
     try {
-      // Realizar análise do documento
       const analysisQuery = `Análise legislativa do documento: ${document.ementa || document.assunto || 'Sem título'}`
       const contextData = {
         document: {
@@ -228,26 +249,28 @@ export default function BibliotecaPage() {
         searchQuery
       }
 
-      // Use direct backend call for deep mode to avoid proxy timeout
       const result = analysisMode === 'deep'
-        ? await analyzeDirectBackend(analysisQuery, analysisMode, contextData)
+        ? await analyzeDirectBackend(analysisQuery, analysisMode, contextData, abortControllerRef.current.signal)
         : await deepSeekService.analyze(analysisQuery, analysisMode, contextData)
 
-      clearInterval(progressInterval)
+      if (!isMounted.current) return
+
       setAnalysisProgress(100)
       setAnalysisStep('Análise concluída!')
-
-      // Salvar no cache
       setCachedAnalysis(cacheKey, analysisMode, result, { document })
-
       setCurrentAnalysis(result)
       setIsAnalyzing(false)
       toast.success(`Análise ${analysisMode === 'deep' ? 'profunda' : 'rápida'} concluída!`)
     } catch (error) {
-      clearInterval(progressInterval)
+      if (!isMounted.current) return
       console.error('Analysis error:', error)
       setIsAnalyzing(false)
       toast.error('Erro ao analisar documento')
+    } finally {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current)
+        progressIntervalRef.current = null
+      }
     }
   }
 
@@ -276,13 +299,15 @@ export default function BibliotecaPage() {
     ]
 
     let stepIndex = 0
-    const progressInterval = setInterval(() => {
+    progressIntervalRef.current = setInterval(() => {
       if (stepIndex < steps.length) {
         setAnalysisProgress(steps[stepIndex].progress)
         setAnalysisStep(steps[stepIndex].step)
         stepIndex++
       }
     }, 4000)
+
+    abortControllerRef.current = new AbortController()
 
     try {
       const documentsSummary = selectedDocuments.map(doc =>
@@ -291,26 +316,30 @@ export default function BibliotecaPage() {
 
       const analysisQuery = `Análise comparativa de ${selectedDocuments.length} documentos legislativos:\n${documentsSummary}`
 
-      // Batch analysis always uses deep mode - use direct backend call
       const result = await analyzeDirectBackend(analysisQuery, 'deep', {
         documents: selectedDocuments,
         searchQuery,
         analysisType: 'comparative'
-      })
+      }, abortControllerRef.current.signal)
 
-      clearInterval(progressInterval)
+      if (!isMounted.current) return
+
       setAnalysisProgress(100)
       setAnalysisStep('Análise comparativa concluída!')
-
       setCurrentAnalysis(result)
       setIsAnalyzing(false)
       setSelectedDocuments([])
       toast.success('Análise comparativa concluída!')
     } catch (error) {
-      clearInterval(progressInterval)
+      if (!isMounted.current) return
       console.error('Batch analysis error:', error)
       setIsAnalyzing(false)
       toast.error('Erro na análise comparativa')
+    } finally {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current)
+        progressIntervalRef.current = null
+      }
     }
   }
 
@@ -1005,9 +1034,11 @@ ${doc.content || 'Conteúdo textual não disponível.'}
                         <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 max-h-96 overflow-y-auto">
                           <div 
                             className="prose dark:prose-invert max-w-none text-sm"
-                            dangerouslySetInnerHTML={{ 
-                              __html: (viewingDocument.texto_original || viewingDocument.content || '')
-                                .replace(/\n/g, '<br/>') 
+                            dangerouslySetInnerHTML={{
+                              __html: sanitizeHtml(
+                                (viewingDocument.texto_original || viewingDocument.content || '')
+                                  .replace(/\n/g, '<br/>')
+                              )
                             }}
                           />
                         </div>
