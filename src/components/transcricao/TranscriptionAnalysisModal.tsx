@@ -328,15 +328,9 @@ export function TranscriptionAnalysisModal({
 
       if (response.success) {
         const analysisResponse = response as AnalysisResponse
-        
-        console.log('🔍 [DEBUG] Analysis Response:', JSON.stringify(analysisResponse, null, 2))
-        
-        // Normalize response data (handle both 'data' and 'analysis' keys)
-        const rawData = analysisResponse.data ?? analysisResponse.analysis
-        console.log('🔍 [DEBUG] Raw Data:', JSON.stringify(rawData, null, 2))
 
+        const rawData = analysisResponse.data ?? analysisResponse.analysis
         const normalizedAnalysis = normalizeAnalysisData(rawData)
-        console.log('🔍 [DEBUG] Normalized:', normalizedAnalysis)
 
         if (normalizedAnalysis) {
             setAnalysis(normalizedAnalysis)

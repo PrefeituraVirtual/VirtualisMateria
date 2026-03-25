@@ -6,37 +6,33 @@ export default function ClearCachePage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Limpar todos os dados armazenados
-    console.log('🧹 Limpando cache e dados...')
+    const isDev = process.env.NODE_ENV === 'development'
 
-    // Limpar localStorage
+    if (isDev) console.log('🧹 Limpando cache e dados...')
+
     localStorage.clear()
-    console.log('✅ localStorage limpo')
+    if (isDev) console.log('✅ localStorage limpo')
 
-    // Limpar sessionStorage
     sessionStorage.clear()
-    console.log('✅ sessionStorage limpo')
+    if (isDev) console.log('✅ sessionStorage limpo')
 
-    // Limpar todos os cookies
     document.cookie.split(";").forEach(c => {
       document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
     })
-    console.log('✅ cookies limpos')
+    if (isDev) console.log('✅ cookies limpos')
 
-    // Limpar IndexedDB (opcional)
     if (window.indexedDB) {
       const databases = indexedDB.databases()
       databases.then(dbs => {
         dbs.forEach(db => {
           indexedDB.deleteDatabase(db.name!)
         })
-        console.log('✅ IndexedDB limpo')
+        if (isDev) console.log('✅ IndexedDB limpo')
       })
     }
 
-    // Redirecionar para login após 2 segundos
     setTimeout(() => {
-      console.log('🔄 Redirecionando para login...')
+      if (isDev) console.log('🔄 Redirecionando para login...')
       router.push('/auth/login')
     }, 2000)
   }, [router])

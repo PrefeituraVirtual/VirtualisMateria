@@ -11,7 +11,7 @@ import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { sanitizeHtml } from '@/lib/markdown-sanitizer'
-import { getSecureItem } from '@/lib/secure-storage'
+import { api } from '@/lib/api'
 import {
   Ata,
   SessionType,
@@ -34,76 +34,44 @@ interface PdfViewerProps {
 function PdfViewer({ ataId, onError }: PdfViewerProps) {
   const [pdfStatus, setPdfStatus] = useState<'loading' | 'loaded' | 'error'>('loading')
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [token, setToken] = useState<string>('')
+  const [blobUrl, setBlobUrl] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
 
-  // Get token from secure storage for iframe auth
   useEffect(() => {
-    const loadToken = async () => {
-      if (typeof window !== 'undefined') {
-        const storedToken = await getSecureItem<string>('authToken')
-        setToken(storedToken || '')
-      }
-    }
-    loadToken()
-  }, [])
+    let objectUrl: string | null = null
+    let isMounted = true
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
-  const pdfUrl = `${baseUrl}/api/atas/${ataId}/pdf${token ? `?token=${encodeURIComponent(token)}` : ''}`
-
-  // Check if PDF is available before showing iframe
-  React.useEffect(() => {
-    // Wait until token is loaded before checking PDF availability
-    if (!token) return
-
-    const checkPdfAvailability = async () => {
+    const loadPdf = async () => {
       try {
-        const response = await fetch(pdfUrl, { method: 'HEAD' })
-        if (response.ok) {
-          setPdfStatus('loaded')
-        } else {
-          const contentType = response.headers.get('content-type')
-          if (contentType?.includes('application/json')) {
-            // Try to get error message
-            const errorResponse = await fetch(pdfUrl)
-            const errorData = await errorResponse.json()
-            setErrorMessage(errorData.error || 'Arquivo não disponível')
-          } else {
-            setErrorMessage('Arquivo PDF não encontrado no servidor')
-          }
-          setPdfStatus('error')
-          onError?.()
-        }
+        const blob = await api.get<Blob>(`/api/atas/${ataId}/pdf`, {
+          responseType: 'blob'
+        })
+        if (!isMounted) return
+        objectUrl = URL.createObjectURL(blob)
+        setBlobUrl(objectUrl)
+        setPdfStatus('loaded')
       } catch {
-        setErrorMessage('Não foi possível conectar ao servidor')
+        if (!isMounted) return
+        setErrorMessage('Arquivo PDF não disponível')
         setPdfStatus('error')
         onError?.()
       }
     }
 
     setPdfStatus('loading')
-    checkPdfAvailability()
-  }, [ataId, pdfUrl, token, onError])
+    setErrorMessage('')
+    setBlobUrl(null)
+    loadPdf()
+
+    return () => {
+      isMounted = false
+      if (objectUrl) URL.revokeObjectURL(objectUrl)
+    }
+  }, [ataId, retryCount, onError])
 
   const handleRetry = useCallback(() => {
-    setPdfStatus('loading')
-    setErrorMessage('')
-    // Re-trigger the effect
-    const checkPdfAvailability = async () => {
-      try {
-        const response = await fetch(pdfUrl, { method: 'HEAD' })
-        if (response.ok) {
-          setPdfStatus('loaded')
-        } else {
-          setErrorMessage('Arquivo PDF não encontrado no servidor')
-          setPdfStatus('error')
-        }
-      } catch {
-        setErrorMessage('Não foi possível conectar ao servidor')
-        setPdfStatus('error')
-      }
-    }
-    checkPdfAvailability()
-  }, [pdfUrl])
+    setRetryCount(c => c + 1)
+  }, [])
 
   if (pdfStatus === 'error') {
     const isProductionFileError = errorMessage?.includes('não está disponível') || errorMessage?.includes('not found')
@@ -158,13 +126,13 @@ function PdfViewer({ ataId, onError }: PdfViewerProps) {
   return (
     <div className="space-y-2">
       <iframe
-        src={pdfUrl}
+        src={blobUrl || ''}
         className="w-full h-[500px] rounded-lg border border-gray-200 dark:border-gray-700"
         title="Visualização do PDF da Ata"
       />
       <div className="flex justify-end">
         <a
-          href={pdfUrl}
+          href={blobUrl || ''}
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm text-virtualis-blue-600 hover:text-virtualis-blue-700 flex items-center gap-1"
