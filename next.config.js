@@ -20,8 +20,6 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2gb',
     },
-    // Optimize CSS output
-    optimizeCss: true,
     // Optimize package imports for tree-shaking
     optimizePackageImports: ['lucide-react', 'recharts', '@syncfusion/ej2-react-documenteditor'],
   },
