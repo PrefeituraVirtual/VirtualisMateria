@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { AnalysisResult, AnalysisMode } from '@/components/ai/DeepSeekAnalysis'
 
 interface CacheEntry {
@@ -37,6 +37,10 @@ export const useDeepSeekCache = (options: UseDeepSeekCacheOptions = {}) => {
     misses: 0,
     totalRequests: 0
   })
+
+  const accessCountRef = useRef<Map<string, number>>(new Map())
+  const persistTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const cacheSizeRef = useRef(0)
 
   // Carregar cache do localStorage na montagem
   useEffect(() => {
@@ -82,26 +86,35 @@ export const useDeepSeekCache = (options: UseDeepSeekCacheOptions = {}) => {
   const clearOldestEntries = useCallback(() => {
     setCache(prevCache => {
       const entries = Array.from(prevCache.entries())
-        .sort(([, a], [, b]) => a.lastAccessed - b.lastAccessed)
+        .sort(([, a], [, b]) => a.timestamp - b.timestamp)
 
       const entriesToKeep = entries.slice(-config.maxSize)
       return new Map(entriesToKeep)
     })
   }, [config.maxSize])
 
-  // Salvar cache no localStorage quando atualizado
   useEffect(() => {
-    if (cache.size > 0) {
+    if (cache.size === 0) return
+
+    if (persistTimerRef.current) {
+      clearTimeout(persistTimerRef.current)
+    }
+
+    persistTimerRef.current = setTimeout(() => {
       try {
         const cacheObj = Object.fromEntries(cache)
         localStorage.setItem(config.storageKey, JSON.stringify(cacheObj))
       } catch (error: unknown) {
         console.warn('Failed to save cache to localStorage:', error)
-        const errorName = error instanceof Error ? error.name : ''
-        // Limpar cache se estourar o limite de armazenamento
-        if (errorName === 'QuotaExceededError') {
+        if (error instanceof Error && error.name === 'QuotaExceededError') {
           clearOldestEntries()
         }
+      }
+    }, 400)
+
+    return () => {
+      if (persistTimerRef.current) {
+        clearTimeout(persistTimerRef.current)
       }
     }
   }, [cache, config.storageKey, clearOldestEntries])
@@ -138,7 +151,6 @@ export const useDeepSeekCache = (options: UseDeepSeekCacheOptions = {}) => {
 
     if (!entry || isExpired(entry)) {
       if (entry) {
-        // Remover entrada expirada
         setCache(prev => {
           const newCache = new Map(prev)
           newCache.delete(key)
@@ -148,20 +160,8 @@ export const useDeepSeekCache = (options: UseDeepSeekCacheOptions = {}) => {
       return null
     }
 
-    // Atualizar informações de acesso
-    const updatedEntry: CacheEntry = {
-      ...entry,
-      accessCount: entry.accessCount + 1,
-      lastAccessed: Date.now()
-    }
-
-    setCache(prev => {
-      const newCache = new Map(prev)
-      newCache.set(key, updatedEntry)
-      return newCache
-    })
-
-    return updatedEntry.result
+    accessCountRef.current.set(key, (accessCountRef.current.get(key) || 0) + 1)
+    return entry.result
   }, [cache, generateKey, isExpired])
 
   // Adicionar entrada ao cache
@@ -249,7 +249,11 @@ export const useDeepSeekCache = (options: UseDeepSeekCacheOptions = {}) => {
   const getTopEntries = useCallback((limit = 10): Array<{key: string, entry: CacheEntry}> => {
     return Array.from(cache.entries())
       .map(([key, entry]) => ({ key, entry }))
-      .sort((a, b) => b.entry.accessCount - a.entry.accessCount)
+      .sort((a, b) => {
+        const countA = accessCountRef.current.get(a.key) || a.entry.accessCount
+        const countB = accessCountRef.current.get(b.key) || b.entry.accessCount
+        return countB - countA
+      })
       .slice(0, limit)
   }, [cache])
 
@@ -263,33 +267,38 @@ export const useDeepSeekCache = (options: UseDeepSeekCacheOptions = {}) => {
   // Otimizar cache (remover entradas pouco acessadas)
   const optimize = useCallback((): void => {
     setCache(prevCache => {
+      const now = Date.now()
       const entries = Array.from(prevCache.entries())
-        .sort(([, a], [, b]) => {
-          // Prioridade: accessCount * recency
-          const scoreA = a.accessCount * (Date.now() - a.lastAccessed)
-          const scoreB = b.accessCount * (Date.now() - b.lastAccessed)
-          return scoreB - scoreA
+        .sort(([keyA, a], [keyB, b]) => {
+          const countA = accessCountRef.current.get(keyA) || a.accessCount
+          const countB = accessCountRef.current.get(keyB) || b.accessCount
+          const ageA = now - a.timestamp
+          const ageB = now - b.timestamp
+          // Menor score = menos útil (pouco acesso + antigo)
+          return (countA / (ageA || 1)) - (countB / (ageB || 1))
         })
 
-      // Manter apenas as melhores entradas
       const entriesToKeep = entries.slice(-Math.floor(config.maxSize * 0.8))
       return new Map(entriesToKeep)
     })
   }, [config.maxSize])
 
-  // Limpeza automática de entradas expiradas a cada hora
+  useEffect(() => {
+    cacheSizeRef.current = cache.size
+  }, [cache.size])
+
   useEffect(() => {
     if (!config.enableStats) return
 
     const interval = setInterval(() => {
       clearExpired()
-      if (cache.size > config.maxSize * 0.9) {
+      if (cacheSizeRef.current > config.maxSize * 0.9) {
         optimize()
       }
-    }, 60 * 60 * 1000) // 1 hora
+    }, 60 * 60 * 1000)
 
     return () => clearInterval(interval)
-  }, [clearExpired, optimize, cache.size, config.maxSize, config.enableStats])
+  }, [clearExpired, optimize, config.maxSize, config.enableStats])
 
   return {
     // Cache operations

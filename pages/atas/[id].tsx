@@ -268,22 +268,22 @@ export default function AtaDetailPage() {
         description={`Ata da ${ataData.numero_sessao} Sessão ${ataData.tipo_sessao} - ${ataData.data_sessao}`}
       />
 
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="container mx-auto max-w-5xl px-4 py-4 sm:py-8">
         {/* Header */}
         <div className="mb-6 print:hidden">
           <Button
             variant="ghost"
             onClick={() => router.push('/transcricao')}
-            className="mb-4"
+            className="mb-4 w-full justify-center sm:w-auto sm:justify-start"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar
           </Button>
 
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl">
                   {ataData.titulo}
                 </h1>
                 {/* Badge removed per user request
@@ -309,12 +309,12 @@ export default function AtaDetailPage() {
               </div>
             </div>
 
-            <div className="flex gap-2 print:hidden">
-              <Button variant="outline" onClick={handlePrint}>
+            <div className="flex w-full flex-col gap-2 print:hidden sm:flex-row sm:flex-wrap xl:w-auto">
+              <Button variant="outline" onClick={handlePrint} className="w-full justify-center sm:w-auto">
                 <Printer className="h-4 w-4 mr-2" />
                 Imprimir
               </Button>
-              <Button variant="outline" onClick={handleDownload}>
+              <Button variant="outline" onClick={handleDownload} className="w-full justify-center sm:w-auto">
                 <Download className="h-4 w-4 mr-2" />
                 Baixar
               </Button>
@@ -324,7 +324,7 @@ export default function AtaDetailPage() {
                     <Button
                       variant="outline"
                       onClick={handleEditClick}
-                      className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-900/20 border-amber-200 dark:border-amber-800"
+                      className="w-full justify-center border-amber-200 text-amber-600 hover:bg-amber-50 hover:text-amber-700 dark:border-amber-800 dark:hover:bg-amber-900/20 sm:w-auto"
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       Editar Texto
@@ -335,6 +335,7 @@ export default function AtaDetailPage() {
                         variant="ghost"
                         onClick={handleCancelEdit}
                         disabled={isSaving}
+                        className="w-full justify-center sm:w-auto"
                       >
                         <XCircle className="h-4 w-4 mr-2" />
                         Cancelar
@@ -342,7 +343,7 @@ export default function AtaDetailPage() {
                       <Button
                         onClick={handleSaveEdit}
                         disabled={isSaving}
-                        className="bg-green-600 hover:bg-green-700 text-white"
+                        className="w-full justify-center bg-green-600 text-white hover:bg-green-700 sm:w-auto"
                       >
                         {isSaving ? (
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -375,7 +376,7 @@ export default function AtaDetailPage() {
                         variant="outline"
                         onClick={handleDeleteAIGenerated}
                         disabled={isDeleting}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 border-red-200 dark:border-red-800"
+                        className="w-full justify-center border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-800 dark:hover:bg-red-900/20 sm:w-auto"
                       >
                         {isDeleting ? (
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -399,7 +400,7 @@ export default function AtaDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-6 space-y-3 print:hidden"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Avisos de Validação
               </h3>
@@ -478,9 +479,9 @@ export default function AtaDetailPage() {
         )}
 
         {/* Official Text */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 mb-6 shadow-sm print:shadow-none print:border-none print:p-0">
-          <div className="flex items-center justify-between mb-4 print:hidden">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+        <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 print:border-none print:p-0 print:shadow-none sm:p-8">
+          <div className="mb-4 flex flex-col gap-2 print:hidden sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-gray-100">
               <FileText className="h-5 w-5" />
               Texto Oficial da Ata
             </h2>
@@ -495,11 +496,11 @@ export default function AtaDetailPage() {
               <textarea
                 value={editedText}
                 onChange={(e) => setEditedText(e.target.value)}
-                className="w-full h-[500px] p-4 font-serif text-sm leading-relaxed border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+                className="h-[60vh] w-full rounded-md border border-gray-300 p-4 font-serif text-sm leading-relaxed focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 sm:h-[500px]"
                 placeholder="Edite o texto da ata aqui..."
               />
             ) : (
-              <pre className="whitespace-pre-wrap font-serif text-sm leading-relaxed text-gray-900 dark:text-gray-100 bg-transparent p-0 border-0 shadow-none">
+              <pre className="overflow-x-auto whitespace-pre-wrap break-words border-0 bg-transparent p-0 font-serif text-sm leading-relaxed text-gray-900 shadow-none dark:text-gray-100">
                 {ataData.official_text}
               </pre>
             )}
@@ -509,7 +510,7 @@ export default function AtaDetailPage() {
 
 
         {/* AI Metadata */}
-        <div className="mt-6 flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400 print:hidden">
+        <div className="mt-6 flex flex-wrap gap-2 text-xs text-gray-500 dark:text-gray-400 print:hidden sm:gap-4">
           <div className="flex items-center gap-1">
             <Brain className="h-3 w-3" />
             <span>Modelo: {ataData.model_used}</span>

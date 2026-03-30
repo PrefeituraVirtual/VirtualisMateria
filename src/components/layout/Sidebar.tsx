@@ -153,7 +153,7 @@ function SidebarComponent({ isOpen, collapsed, onClose, onToggleCollapse: _onTog
                       onClick={(e) => {
                         if (itemHasChildren) {
                           e.preventDefault()
-                          if (!collapsed) {
+                          if (!collapsed || isOpen) {
                             toggleExpanded(item.id)
                           }
                         } else {
@@ -177,12 +177,12 @@ function SidebarComponent({ isOpen, collapsed, onClose, onToggleCollapse: _onTog
                         collapsed && 'lg:gap-0'
                       )}>
                         {getIcon(item.icon)}
-                        {!collapsed && (
-                          <span className="hidden lg:block">{item.label}</span>
+                        {(!collapsed || isOpen) && (
+                          <span>{item.label}</span>
                         )}
                       </div>
 
-                      {!collapsed && (
+                      {(!collapsed || isOpen) && (
                         <div className="flex items-center gap-2">
                           {'badge' in item && item.badge !== undefined && item.badge > 0 && (
                             <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-virtualis-cyan-500 text-white">
@@ -233,7 +233,7 @@ function SidebarComponent({ isOpen, collapsed, onClose, onToggleCollapse: _onTog
 
           {/* Footer do Sidebar */}
           <div className="p-2 lg:p-4 border-t-0 relative before:absolute before:top-0 before:left-0 before:w-full before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-virtualis-gold-500/50 before:to-transparent">
-            {!collapsed ? (
+            {(!collapsed || isOpen) ? (
               <div className="text-xs text-center text-gray-500 dark:text-gray-400">
                 Materia Virtualis v1.0
                 <br />

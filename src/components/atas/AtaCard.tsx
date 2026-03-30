@@ -107,10 +107,10 @@ export function AtaCard({
       )}
     >
       <div 
-        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+        className="flex items-start justify-between gap-3 p-4 cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center gap-4 flex-1 min-w-0">
+        <div className="flex items-start gap-3 flex-1 min-w-0">
           {/* Checkbox for Selection */}
           {onSelect && (
             <button
@@ -136,7 +136,7 @@ export function AtaCard({
            </div>
 
           {/* Quick Info (Always Visible) */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
              <Badge className={cn('text-xs shrink-0', getSessionBadgeClass(sessionType as SessionType))}>
                 {getIcon(sessionConfig?.icon || 'Calendar')}
                 <span className="ml-1">{sessionConfig?.label || sessionType}</span>
@@ -147,7 +147,7 @@ export function AtaCard({
                 <span className="ml-1">{statusConfig?.label || status}</span>
               </Badge>
 
-             <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+             <span className="min-w-0 break-words text-xs font-medium text-gray-900 dark:text-gray-100 sm:text-sm">
                {sessionNumber}ª Sessão - {formatSessionDate(sessionDate)}
              </span>
           </div>
@@ -164,7 +164,7 @@ export function AtaCard({
             transition={{ duration: 0.2 }}
           >
             <div className="p-4 pt-0 border-t border-gray-100 dark:border-gray-800/50 bg-gray-50/30 dark:bg-gray-900/10">
-               <div className="pt-4 flex items-start justify-between gap-4">
+               <div className="pt-4 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div className="flex-1 min-w-0">
                       {/* Full Title */}
                       <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
@@ -187,7 +187,7 @@ export function AtaCard({
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2 flex-shrink-0">
+                  <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap lg:w-auto lg:flex-shrink-0">
                     <Button
                       variant="outline"
                       size="sm"
@@ -195,7 +195,7 @@ export function AtaCard({
                         e.stopPropagation()
                         onView(ata)
                       }}
-                      className="hover:border-virtualis-blue-500/50 hover:text-virtualis-blue-600"
+                      className="w-full justify-center hover:border-virtualis-blue-500/50 hover:text-virtualis-blue-600 sm:w-auto"
                     >
                       <Eye className="h-4 w-4 mr-1" />
                       Visualizar
@@ -209,7 +209,7 @@ export function AtaCard({
                           e.stopPropagation()
                           onEdit(ata)
                         }}
-                        className="hover:border-yellow-500/50 hover:text-yellow-600"
+                        className="w-full justify-center hover:border-yellow-500/50 hover:text-yellow-600 sm:w-auto"
                       >
                         <Edit2 className="h-4 w-4 mr-1" />
                         Editar
@@ -224,7 +224,7 @@ export function AtaCard({
                           e.stopPropagation()
                           onDelete(ata)
                         }}
-                        className="hover:border-red-500/50 hover:text-red-600"
+                        className="w-full justify-center hover:border-red-500/50 hover:text-red-600 sm:w-auto"
                       >
                         <Trash2 className="h-4 w-4 mr-1" />
                         Excluir

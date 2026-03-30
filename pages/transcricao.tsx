@@ -69,7 +69,7 @@ const ConfirmModal: React.FC<{
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6"
+          className="w-full max-w-md rounded-xl bg-white p-4 shadow-xl dark:bg-gray-800 sm:p-6"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center gap-4 mb-4">
@@ -86,18 +86,19 @@ const ConfirmModal: React.FC<{
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 mt-6">
+          <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <Button
               variant="outline"
               onClick={onCancel}
               disabled={isLoading}
+              className="w-full sm:w-auto"
             >
               {cancelText}
             </Button>
             <Button
               onClick={onConfirm}
               disabled={isLoading}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="w-full bg-red-600 text-white hover:bg-red-700 sm:w-auto"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -214,7 +215,7 @@ const YouTubeInput: React.FC<{
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
           URL do YouTube
         </label>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
             <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-red-500" />
             <input
@@ -222,14 +223,14 @@ const YouTubeInput: React.FC<{
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://www.youtube.com/watch?v=..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-virtualis-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-virtualis-blue-500 focus:border-transparent text-sm sm:text-base"
               disabled={isLoading}
             />
           </div>
           <Button
             type="submit"
             disabled={isLoading || !videoId}
-            className="px-6"
+            className="px-6 w-full sm:w-auto"
           >
             {isLoading ? (
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -328,7 +329,7 @@ const FileUpload: React.FC<{
 
   return (
     <div
-      className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+      className={`relative border-2 border-dashed rounded-lg p-4 sm:p-8 text-center transition-colors ${
         dragActive
           ? 'border-virtualis-blue-500 bg-virtualis-blue-50 dark:bg-virtualis-blue-900/20'
           : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
@@ -382,136 +383,137 @@ const JobItem: React.FC<{
       animate={{ opacity: 1, y: 0 }}
       className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4"
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
+      <div className="space-y-3">
+        <div className="flex items-center gap-3 min-w-0">
           {job.filename?.startsWith('youtube:') ? (
-            <Youtube className="h-8 w-8 text-red-500 flex-shrink-0" />
+            <Youtube className="h-6 w-6 sm:h-8 sm:w-8 text-red-500 flex-shrink-0" />
           ) : (
-            <FileAudio className="h-8 w-8 text-virtualis-blue-500 flex-shrink-0" />
+            <FileAudio className="h-6 w-6 sm:h-8 sm:w-8 text-virtualis-blue-500 flex-shrink-0" />
           )}
           <div className="min-w-0 flex-1">
-            <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
+            <p className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100 truncate">
               {job.filename?.startsWith('youtube:') ? (
                 <YouTubeTitle videoId={job.filename.replace('youtube:', '')} />
               ) : (
                 job.filename || 'Arquivo sem nome'
               )}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {job.createdAt ? new Date(job.createdAt).toLocaleString('pt-BR') : 'Data não disponível'}
-              {job.type && ` • ${job.type === 'gemini' ? 'Virtualis' : 'Virtualis'}`}
-            </p>
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {job.createdAt ? new Date(job.createdAt).toLocaleString('pt-BR') : 'Data não disponível'}
+                {job.type && ` • ${job.type === 'gemini' ? 'Virtualis' : 'Virtualis'}`}
+              </p>
+              <StatusBadge status={job.status} />
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <StatusBadge status={job.status} />
-
-          {job.status === 'processing' && job.progress > 0 && (
-            <div className="w-24">
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-virtualis-blue-500 transition-all duration-300"
-                  style={{ width: `${job.progress}%` }}
-                />
-              </div>
-              <p className="text-xs text-center text-gray-500 mt-1">{job.progress}%</p>
+        {job.status === 'processing' && job.progress > 0 && (
+          <div className="w-full sm:w-32">
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-virtualis-blue-500 transition-all duration-300"
+                style={{ width: `${job.progress}%` }}
+              />
             </div>
+            <p className="text-xs text-center text-gray-500 mt-1">{job.progress}%</p>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-2 border-t border-gray-100 pt-2 dark:border-gray-800 sm:flex-row sm:flex-wrap">
+          {job.status === 'completed' && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onViewResult(job.id)}
+                className="w-full justify-center sm:w-auto"
+              >
+                <Eye className="h-4 w-4 mr-1" />
+                Ver
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onAnalyze(job)}
+                className={job.hasAnalysis
+                  ? "w-full justify-center border-green-300 text-green-600 hover:bg-green-50 hover:text-green-700 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-900/20 dark:hover:text-green-300 sm:w-auto"
+                  : "w-full justify-center text-purple-600 hover:bg-purple-50 hover:text-purple-700 dark:text-purple-400 dark:hover:bg-purple-900/20 dark:hover:text-purple-300 sm:w-auto"
+                }
+                title={job.hasAnalysis && job.analysisCreatedAt
+                  ? `Analisado em ${new Date(job.analysisCreatedAt).toLocaleString('pt-BR')}`
+                  : 'Iniciar analise com IA'
+                }
+              >
+                {job.hasAnalysis ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-1" />
+                    <span className="hidden sm:inline">Ver </span>Analise
+                  </>
+                ) : (
+                  <>
+                    <Brain className="h-4 w-4 mr-1" />
+                    Analise
+                  </>
+                )}
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsGeneratorOpen(!isGeneratorOpen)}
+                className={cn(
+                  "w-full justify-center transition-colors sm:w-auto",
+                  isGeneratorOpen
+                    ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    : (job.ataId
+                        ? "text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:border-green-800 dark:hover:bg-green-900/30"
+                        : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100")
+                )}
+                title={job.ataId ? "Ata ja gerada (Clique para ver)" : "Gerador de Ata"}
+              >
+                <FileText className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">{job.ataId ? "Ata Gerada" : "Gerador de Ata"}</span>
+                <span className="sm:hidden">{job.ataId ? "Ata" : "Ata"}</span>
+                <ChevronDown className={cn("h-3 w-3 ml-1 transition-transform duration-200", isGeneratorOpen ? "rotate-180" : "")} />
+              </Button>
+            </>
           )}
 
-          <div className="flex gap-2">
-            {job.status === 'completed' && (
-              <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onViewResult(job.id)}
-                >
-                  <Eye className="h-4 w-4 mr-1" />
-                  Ver
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onAnalyze(job)}
-                  className={job.hasAnalysis
-                    ? "text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-900/20 border-green-300 dark:border-green-700"
-                    : "text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:bg-purple-900/20"
-                  }
-                  title={job.hasAnalysis && job.analysisCreatedAt
-                    ? `Analisado em ${new Date(job.analysisCreatedAt).toLocaleString('pt-BR')}`
-                    : 'Iniciar analise com IA'
-                  }
-                >
-                  {job.hasAnalysis ? (
-                    <>
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                      Ver Analise
-                    </>
-                  ) : (
-                    <>
-                      <Brain className="h-4 w-4 mr-1" />
-                      Analise
-                    </>
-                  )}
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsGeneratorOpen(!isGeneratorOpen)}
-                  className={cn(
-                    "transition-colors",
-                    isGeneratorOpen 
-                      ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100" 
-                      : (job.ataId 
-                          ? "text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-400 dark:border-green-800 dark:hover:bg-green-900/30" 
-                          : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100")
-                  )}
-                  title={job.ataId ? "Ata ja gerada (Clique para ver)" : "Gerador de Ata"}
-                >
-                  <FileText className="h-4 w-4 mr-1" />
-                  {job.ataId ? "Ata Gerada" : "Gerador de Ata"}
-                  <ChevronDown className={cn("h-3 w-3 ml-1 transition-transform duration-200", isGeneratorOpen ? "rotate-180" : "")} />
-                </Button>
-              </>
-            )}
+          {['pending', 'processing', 'downloading', 'converting', 'transcribing'].includes(job.status) && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onCancel(job.id)}
+              className="w-full justify-center text-red-600 hover:text-red-700 sm:w-auto"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
 
-            {['pending', 'processing', 'downloading', 'converting', 'transcribing'].includes(job.status) && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onCancel(job.id)}
-                className="text-red-600 hover:text-red-700"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
+          {(job.status === 'completed' || job.status === 'failed' || job.status === 'cancelled') && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onDelete(job.id)}
+              className="w-full justify-center text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20 sm:w-auto"
+              title="Excluir transcricao"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
 
-            {(job.status === 'completed' || job.status === 'failed' || job.status === 'cancelled') && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onDelete(job.id)}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                title="Excluir transcricao"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-
-            {(job.status === 'failed' || job.status === 'cancelled' || job.status === 'processing' || job.status === 'transcribing') && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onRestart(job.id)}
-                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 border-blue-200 dark:border-blue-800"
-                  title="Reiniciar transcricao"
-                >
-                   <RefreshCw className="h-4 w-4" />
-                </Button>
-              )}
-          </div>
+          {(job.status === 'failed' || job.status === 'cancelled' || job.status === 'processing' || job.status === 'transcribing') && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onRestart(job.id)}
+              className="w-full justify-center border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:border-blue-800 dark:hover:bg-blue-900/20 sm:w-auto"
+              title="Reiniciar transcricao"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
 
@@ -608,30 +610,30 @@ const ResultViewer: React.FC<{
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col"
+          className="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-4xl flex-col rounded-xl bg-white shadow-xl dark:bg-gray-800 sm:max-h-[90vh]"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <div className="flex flex-wrap items-start justify-between gap-3 p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
                 Resultado da Transcricao
               </h2>
               {result && (
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                   {result.wordCount.toLocaleString()} palavras •
                   Processado via {result.type === 'gemini' ? 'Virtualis' : result.type === 'google_v2' ? 'OpenAI Whisper' : 'Virtualis'}
                 </p>
               )}
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={onCopy}>
-                <Copy className="h-4 w-4 mr-1" />
-                Copiar
+            <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+              <Button variant="outline" size="sm" onClick={onCopy} className="justify-center">
+                <Copy className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">Copiar</span>
               </Button>
-              <Button variant="outline" size="sm" onClick={onDownload}>
-                <Download className="h-4 w-4 mr-1" />
-                Baixar
+              <Button variant="outline" size="sm" onClick={onDownload} className="justify-center">
+                <Download className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">Baixar</span>
               </Button>
               <button
                 onClick={onClose}
@@ -643,13 +645,13 @@ const ResultViewer: React.FC<{
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-5">
             {isLoading ? (
               <div className="flex items-center justify-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin text-virtualis-blue-500" />
               </div>
             ) : result ? (
-              <pre className="whitespace-pre-wrap font-sans text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+              <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                 {result.transcription}
               </pre>
             ) : (
@@ -681,7 +683,7 @@ const InfoModal: React.FC<{
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6"
+          className="w-full max-w-md rounded-xl bg-white p-4 shadow-xl dark:bg-gray-800 sm:p-6"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-4">
@@ -1061,22 +1063,24 @@ export default function TranscricaoPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Button
                 variant="outline"
+                size="sm"
                 onClick={() => setInfoModalOpen(true)}
                 className="text-virtualis-blue-600 border-virtualis-blue-200 hover:bg-virtualis-blue-50 dark:border-virtualis-blue-800 dark:text-virtualis-blue-400 dark:hover:bg-virtualis-blue-900/20"
               >
-                <Info className="h-4 w-4 mr-2" />
-                Como Funciona
+                <Info className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Como Funciona</span>
               </Button>
               <Button
                 variant="outline"
+                size="sm"
                 onClick={fetchJobs}
                 disabled={isLoading}
               >
-                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                Atualizar
+                <RefreshCw className={`h-4 w-4 sm:mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Atualizar</span>
               </Button>
             </div>
           </div>
@@ -1087,41 +1091,44 @@ export default function TranscricaoPage() {
             <div className="flex border-b border-gray-200 dark:border-gray-700">
               <button
                 onClick={() => setActiveTab('youtube')}
-                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                className={`flex-1 px-2 sm:px-4 py-3 text-xs sm:text-sm font-medium transition-colors ${
                   activeTab === 'youtube'
                     ? 'bg-gradient-to-t from-virtualis-gold-500/10 to-transparent text-virtualis-blue-600 dark:text-virtualis-blue-400 border-b-2 border-virtualis-gold-500'
                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
-                <Youtube className="inline-block h-4 w-4 mr-2" />
-                URL do YouTube
+                <Youtube className="inline-block h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">URL do YouTube</span>
+                <span className="sm:hidden block text-[10px] mt-0.5">YouTube</span>
               </button>
               <button
                 onClick={() => setActiveTab('upload')}
-                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                className={`flex-1 px-2 sm:px-4 py-3 text-xs sm:text-sm font-medium transition-colors ${
                   activeTab === 'upload'
                     ? 'bg-gradient-to-t from-virtualis-gold-500/10 to-transparent text-virtualis-blue-600 dark:text-virtualis-blue-400 border-b-2 border-virtualis-gold-500'
                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
-                <Upload className="inline-block h-4 w-4 mr-2" />
-                Upload de Arquivo
+                <Upload className="inline-block h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Upload de Arquivo</span>
+                <span className="sm:hidden block text-[10px] mt-0.5">Upload</span>
               </button>
               <button
                 onClick={() => setActiveTab('sessoes')}
-                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                className={`flex-1 px-2 sm:px-4 py-3 text-xs sm:text-sm font-medium transition-colors ${
                   activeTab === 'sessoes'
                     ? 'bg-gradient-to-t from-virtualis-gold-500/10 to-transparent text-virtualis-blue-600 dark:text-virtualis-blue-400 border-b-2 border-virtualis-gold-500'
                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
-                <Database className="inline-block h-4 w-4 mr-2" />
-                Sessoes do Banco
+                <Database className="inline-block h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Sessoes do Banco</span>
+                <span className="sm:hidden block text-[10px] mt-0.5">Sessoes</span>
               </button>
             </div>
 
             {/* Tab Content */}
-            <div className={activeTab === 'sessoes' ? '' : 'p-6'}>
+            <div className={activeTab === 'sessoes' ? '' : 'p-4 sm:p-6'}>
               <AnimatePresence mode="wait">
                 {activeTab === 'youtube' && (
                   <motion.div
@@ -1172,10 +1179,11 @@ export default function TranscricaoPage() {
               onClick={() => setIsHistoryOpen(!isHistoryOpen)}
               className="w-full flex items-center justify-between p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                   <History className="h-5 w-5 text-virtualis-blue-500" />
-                  Historico de Transcricoes
+                  <span className="hidden sm:inline">Historico de Transcricoes</span>
+                  <span className="sm:hidden">Historico</span>
                 </h2>
                 {jobs.length > 0 && (
                   <div className="flex items-center gap-2">
@@ -1185,7 +1193,8 @@ export default function TranscricaoPage() {
                     {jobs.some(j => ['processing', 'downloading', 'transcribing', 'pending'].includes(j.status)) && (
                       <span className="flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 animate-pulse">
                         <Loader2 className="h-3 w-3 animate-spin" />
-                        Transcrevendo...
+                        <span className="hidden sm:inline">Transcrevendo...</span>
+                        <span className="sm:hidden">...</span>
                       </span>
                     )}
                   </div>

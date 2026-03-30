@@ -224,7 +224,7 @@ export default function AtasPage() {
           className="max-w-7xl mx-auto space-y-6 pb-8"
         >
           {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <FileText className="h-7 w-7 text-virtualis-blue-600" />
@@ -235,7 +235,7 @@ export default function AtasPage() {
               </p>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap md:w-auto">
               <Button
                 variant="outline"
                 onClick={() => setShowStats(!showStats)}
@@ -251,6 +251,7 @@ export default function AtasPage() {
                   fetchStats()
                 }}
                 disabled={isLoading}
+                className="w-full sm:w-auto"
               >
                 <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
                 Atualizar
@@ -271,10 +272,11 @@ export default function AtasPage() {
           )}
 
           {/* Quick Filters */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap">
             <Button
               variant={filters.status === 'all' ? 'primary' : 'outline'}
               size="sm"
+              className="shrink-0"
               onClick={() => {
                 setFilters({ ...filters, status: 'all' })
                 fetchAtas(1)
@@ -287,6 +289,7 @@ export default function AtasPage() {
                 key={key}
                 variant={filters.status === key ? 'primary' : 'outline'}
                 size="sm"
+                className="shrink-0"
                 onClick={() => {
                   setFilters({ ...filters, status: key as any })
                   fetchAtas(1)

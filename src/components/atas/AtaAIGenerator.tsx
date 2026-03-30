@@ -471,25 +471,27 @@ export function AtaAIGenerator({
   const isCompleted = generatedAtaId !== null
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl border-2 border-purple-200 dark:border-purple-800 p-6">
+    <div className="rounded-xl border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50 p-4 dark:border-purple-800 dark:from-purple-900/20 dark:to-blue-900/20 sm:p-6">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-          <Brain className="h-6 w-6 text-white" />
-        </div>
-        <div className="flex-1">
-          <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            Gerador de Ata Automático
-            <Sparkles className="h-5 w-5 text-purple-500" />
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Use IA para gerar ata oficial a partir da transcrição
-          </p>
+      <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-blue-500">
+            <Brain className="h-6 w-6 text-white" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="flex flex-wrap items-center gap-2 text-base font-bold text-gray-900 dark:text-gray-100 sm:text-lg">
+              Gerador de Ata Automático
+              <Sparkles className="h-5 w-5 text-purple-500" />
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Use IA para gerar ata oficial a partir da transcrição
+            </p>
+          </div>
         </div>
 
         {/* Loading state while checking if ata exists */}
         {isCheckingExistence && (
-          <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+          <div className="flex w-full items-center gap-2 text-gray-500 dark:text-gray-400 sm:w-auto">
             <Loader2 className="h-4 w-4 animate-spin" />
             <span className="text-sm">Verificando...</span>
           </div>
@@ -497,14 +499,14 @@ export function AtaAIGenerator({
 
         {/* Ata already exists - show view button */}
         {!isCheckingExistence && existingAtaId && !hasStarted && (
-          <div className="flex items-center gap-3">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
             <Badge variant="default" className="bg-green-500 text-white">
               <CheckCircle className="h-3 w-3 mr-1" />
               Ata já Gerada
             </Badge>
             <Button
               onClick={handleViewAta}
-              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 sm:w-auto"
             >
               <Eye className="h-4 w-4 mr-2" />
               Ver Ata Completa
@@ -517,7 +519,7 @@ export function AtaAIGenerator({
           <Button
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 sm:w-auto"
           >
             {isGenerating ? (
               <>
@@ -620,7 +622,7 @@ export function AtaAIGenerator({
                   className="overflow-hidden"
                 >
                   <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <pre className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-sans">
+                    <pre className="whitespace-pre-wrap break-words font-sans text-xs text-gray-700 dark:text-gray-300">
                       {previewText}...
                     </pre>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">
@@ -640,11 +642,11 @@ export function AtaAIGenerator({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 flex gap-3"
+            className="mt-4 flex flex-col gap-3 sm:flex-row"
           >
             <Button
               onClick={handleViewAta}
-              className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              className="w-full flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
             >
               <Eye className="h-4 w-4 mr-2" />
               Ver Ata Completa
@@ -656,6 +658,7 @@ export function AtaAIGenerator({
                   window.open(`/atas/${generatedAtaId}`, '_blank')
                 }
               }}
+              className="w-full sm:w-auto"
             >
               <ExternalLink className="h-4 w-4" />
             </Button>
@@ -669,7 +672,7 @@ export function AtaAIGenerator({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mt-4 flex items-center justify-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg"
+            className="mt-4 flex flex-col items-center justify-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-center dark:border-green-800 dark:bg-green-900/20 sm:flex-row sm:text-left"
           >
             <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
             <span className="text-sm font-medium text-green-900 dark:text-green-200">

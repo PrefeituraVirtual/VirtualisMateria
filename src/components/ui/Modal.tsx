@@ -101,7 +101,7 @@ export const Modal = ({ isOpen, onClose, children, className }: ModalProps) => {
     <ModalContext.Provider value={{ titleId, descriptionId }}>
       <div
         ref={overlayRef}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-all animate-in fade-in duration-200"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 backdrop-blur-sm transition-all animate-in fade-in duration-200 sm:p-4"
         onClick={handleOverlayClick}
       >
         <div
@@ -112,7 +112,7 @@ export const Modal = ({ isOpen, onClose, children, className }: ModalProps) => {
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={cn(
-            'relative w-full max-w-lg scale-100 gap-4 border bg-white p-6 shadow-lg duration-200 sm:rounded-lg dark:bg-gray-900 dark:border-gray-800 animate-in zoom-in-95 fade-in-0',
+            'relative flex w-full max-w-lg scale-100 flex-col gap-4 overflow-hidden rounded-lg border bg-white p-4 shadow-lg duration-200 dark:border-gray-800 dark:bg-gray-900 animate-in zoom-in-95 fade-in-0 sm:max-h-[calc(100dvh-2rem)] sm:p-6 sm:rounded-lg',
             className
           )}
         >

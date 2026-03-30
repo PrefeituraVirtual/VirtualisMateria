@@ -419,7 +419,7 @@ export function TranscriptionAnalysisModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 backdrop-blur-sm sm:p-4"
         onClick={handleOverlayClick}
         role="dialog"
         aria-modal="true"
@@ -431,22 +431,22 @@ export function TranscriptionAnalysisModal({
           exit={{ scale: 0.95, opacity: 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
           className={cn(
-            'relative w-full max-w-3xl max-h-[90vh] overflow-hidden',
+            'relative w-full max-w-3xl max-h-[calc(100dvh-1.5rem)] overflow-hidden sm:max-h-[90vh]',
             'bg-white dark:bg-gray-900 rounded-2xl shadow-2xl',
             'border border-purple-200 dark:border-purple-800/50'
           )}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="relative px-6 py-4 border-b border-purple-100 dark:border-purple-800/30 bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20">
-            <div className="flex items-center gap-3">
+          <div className="relative border-b border-purple-100 bg-gradient-to-r from-purple-50 to-violet-50 px-4 py-4 dark:border-purple-800/30 dark:from-purple-900/20 dark:to-violet-900/20 sm:px-6">
+            <div className="flex items-start gap-3">
               <div className="flex-shrink-0 p-2.5 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl shadow-lg shadow-purple-500/25">
                 <Brain className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1 min-w-0">
                 <h2
                   id="analysis-modal-title"
-                  className="text-lg font-semibold text-gray-900 dark:text-gray-100"
+                  className="text-base font-semibold text-gray-900 dark:text-gray-100 sm:text-lg"
                 >
                   Analise Virtualis
                 </h2>
@@ -473,10 +473,10 @@ export function TranscriptionAnalysisModal({
 
           {/* Session Info Badge */}
           {sessionInfo && (
-            <div className="px-6 pt-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg text-sm">
+            <div className="px-4 pt-4 sm:px-6">
+              <div className="flex w-full flex-wrap items-start gap-2 rounded-lg bg-blue-50 px-3 py-1.5 text-sm text-blue-700 dark:bg-blue-900/20 dark:text-blue-300">
                 <Calendar className="h-4 w-4" />
-                <span>
+                <span className="break-words">
                   Sessao {sessionInfo.tipo} #{sessionInfo.numero} -{' '}
                   {new Date(sessionInfo.data).toLocaleDateString('pt-BR')}
                 </span>
@@ -485,7 +485,7 @@ export function TranscriptionAnalysisModal({
           )}
 
           {/* Content */}
-          <div className="px-6 py-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+          <div className="max-h-[calc(100dvh-220px)] overflow-y-auto px-4 py-4 sm:max-h-[calc(90vh-200px)] sm:px-6 sm:py-6">
             {/* Initial State - Show "Iniciar Analise" button */}
             {!isLoading && !isAnalyzed && !error && (
               <motion.div
@@ -509,7 +509,7 @@ export function TranscriptionAnalysisModal({
                 </div>
                 <Button
                   onClick={handleStartAnalysis}
-                  className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 px-8 py-3 text-base"
+                  className="w-full bg-gradient-to-r from-purple-600 to-violet-600 px-8 py-3 text-base text-white shadow-lg shadow-purple-500/25 hover:from-purple-700 hover:to-violet-700 hover:shadow-purple-500/40 sm:w-auto"
                 >
                   <Brain className="h-5 w-5 mr-2" />
                   Iniciar Analise
@@ -582,7 +582,7 @@ export function TranscriptionAnalysisModal({
                 </p>
                 <Button
                   onClick={handleStartAnalysis}
-                  className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white shadow-lg shadow-purple-500/25"
+                  className="w-full bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-lg shadow-purple-500/25 hover:from-purple-700 hover:to-violet-700 sm:w-auto"
                 >
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Tentar Novamente
@@ -621,7 +621,7 @@ export function TranscriptionAnalysisModal({
 
                 {/* Analysis content */}
                 <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-                  <pre className="whitespace-pre-wrap font-sans text-sm text-gray-700 dark:text-gray-300 leading-relaxed overflow-auto max-h-[400px]">
+                  <pre className="max-h-[400px] overflow-x-auto whitespace-pre-wrap break-words font-sans text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                     {analysis}
                   </pre>
                 </div>
@@ -630,19 +630,19 @@ export function TranscriptionAnalysisModal({
           </div>
 
           {/* Footer */}
-          <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+          <div className="border-t border-gray-200 bg-gray-50 px-4 py-4 dark:border-gray-700 dark:bg-gray-800/50 sm:px-6">
             {isAnalyzed && analysis && !isLoading ? (
-              <div className="flex items-center justify-between flex-wrap gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
                 <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                   <Sparkles className="h-4 w-4 text-purple-500" />
                   <span>Analise gerada por IA (DeepSeek Reasoner)</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleStartAnalysis}
-                    className="text-gray-600 dark:text-gray-400"
+                    className="w-full text-gray-600 dark:text-gray-400 sm:w-auto"
                   >
                     <RefreshCw className="h-4 w-4 mr-1" />
                     Nova Analise
@@ -651,6 +651,7 @@ export function TranscriptionAnalysisModal({
                     variant="outline"
                     size="sm"
                     onClick={handleDownload}
+                    className="w-full sm:w-auto"
                   >
                     <Download className="h-4 w-4 mr-1" />
                     Baixar
@@ -658,7 +659,7 @@ export function TranscriptionAnalysisModal({
                   <Button
                     onClick={handleCopyToClipboard}
                     size="sm"
-                    className="bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white"
+                    className="w-full bg-gradient-to-r from-purple-600 to-violet-600 text-white hover:from-purple-700 hover:to-violet-700 sm:w-auto"
                   >
                     {copied ? (
                       <>
@@ -675,12 +676,12 @@ export function TranscriptionAnalysisModal({
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                   <Sparkles className="h-4 w-4 text-purple-500" />
                   <span>Powered by Virtualis</span>
                 </div>
-                <Button variant="outline" size="sm" onClick={onClose} disabled={isLoading}>
+                <Button variant="outline" size="sm" onClick={onClose} disabled={isLoading} className="w-full sm:w-auto">
                   Fechar
                 </Button>
               </div>

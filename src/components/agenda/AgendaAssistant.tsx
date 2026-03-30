@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/Button'
 import { Modal, ModalHeader, ModalTitle, ModalDescription } from '@/components/ui/Modal'
 import { toast } from 'react-hot-toast'
 import { format, parseISO } from 'date-fns'
-import { agendaService } from '@/lib/api'
-import { getSecureItem } from '@/lib/secure-storage'
+import { agendaService, api } from '@/lib/api'
+import { getCSRFToken } from '@/lib/csrf-protection'
 import type { AgendaCreateData } from '@/types/api'
 
 interface AgendaAssistantProps {
@@ -111,12 +111,15 @@ export default function AgendaAssistant({ isOpen, onClose, onSuccess }: AgendaAs
 
     setLoading(true)
     try {
-      const token = await getSecureItem<string>('authToken')
-      const response = await fetch('/api/agenda/ai/parse', {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'
+      const token = api.getCachedToken()
+      const csrfToken = getCSRFToken()
+      const response = await fetch(`${backendUrl}/api/agenda/ai/parse`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+          ...(csrfToken && { 'X-CSRF-Token': csrfToken }),
         },
         body: JSON.stringify({ prompt })
       })

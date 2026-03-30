@@ -88,9 +88,9 @@ export function AtaFilters({
       <CardContent className="pt-6">
         <div className="space-y-4">
           {/* Search Input */}
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <Input
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex-1">
+                <Input
                 placeholder="Buscar por titulo, resumo ou numero da sessao..."
                 value={filters.search || ''}
                 onChange={handleSearchChange}
@@ -100,14 +100,15 @@ export function AtaFilters({
                 aria-label="Buscar atas"
               />
             </div>
-            <Button
-              variant="primary"
-              onClick={onSearch}
-              disabled={isLoading}
-              isLoading={isLoading}
-              aria-label="Buscar"
-            >
-              Buscar
+              <Button
+                variant="primary"
+                onClick={onSearch}
+                disabled={isLoading}
+                isLoading={isLoading}
+                className="w-full sm:w-auto"
+                aria-label="Buscar"
+              >
+                Buscar
             </Button>
           </div>
 
@@ -224,7 +225,7 @@ export function AtaFilters({
                 variant="ghost"
                 size="sm"
                 onClick={onClear}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="w-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 sm:w-auto"
               >
                 <X className="h-4 w-4 mr-1" />
                 Limpar filtros
