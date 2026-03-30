@@ -621,69 +621,65 @@ ${doc.content || 'Conteúdo textual não disponível.'}
                         : 'hover:border-virtualis-gold-500/30'
                     }`}>
                       <CardContent className="pt-6">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              {/* Selection Checkbox */}
-                              <button
-                                onClick={() => toggleDocumentSelection(result)}
-                                className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                                  isSelected
-                                    ? 'bg-amber-500 border-amber-500 text-white'
-                                    : 'border-gray-300 dark:border-gray-600 hover:border-amber-400'
-                                }`}
-                              >
-                                {isSelected && <Check className="h-3 w-3" />}
-                              </button>
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <button
+                            onClick={() => toggleDocumentSelection(result)}
+                            className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
+                              isSelected
+                                ? 'bg-amber-500 border-amber-500 text-white'
+                                : 'border-gray-300 dark:border-gray-600 hover:border-amber-400'
+                            }`}
+                          >
+                            {isSelected && <Check className="h-3 w-3" />}
+                          </button>
 
-                              <Badge variant="info">
-                                {tipoConfig?.label || result.tipo}
-                              </Badge>
-                              {result.similarity_score && (
-                                <Badge variant="success" className="bg-virtualis-gold-100 text-virtualis-gold-800 border-virtualis-gold-200 dark:bg-virtualis-gold-900/30 dark:text-virtualis-gold-300 dark:border-virtualis-gold-800">
-                                  {Math.round(result.similarity_score * 100)}% relevante
-                                </Badge>
-                              )}
-                            </div>
-                            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                              {result.ementa}
-                            </h3>
-                            {result.assunto && (
-                              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                {result.assunto.substring(0, 200)}...
-                              </p>
-                            )}
-                            <p className="text-xs text-gray-500 dark:text-gray-500">
-                              Criado em {formatDate(result.created_at)}
-                            </p>
-                          </div>
-                          <div className="flex gap-2">
-                            {/* Analysis Button */}
-                            <Button
-                              onClick={() => handleDocumentAnalysis(result)}
-                              variant={analysisMode === 'deep' ? 'premium' : 'primary'}
-                              size="sm"
-                              className="hover:border-amber-500/50"
-                            >
-                              <Brain className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="hover:border-virtualis-gold-500/50 hover:text-virtualis-gold-600"
-                              onClick={() => handleView(result)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="hover:border-virtualis-gold-500/50 hover:text-virtualis-gold-600"
-                              onClick={() => handleDownload(result)}
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                          </div>
+                          <Badge variant="info">
+                            {tipoConfig?.label || result.tipo}
+                          </Badge>
+                          {result.similarity_score && (
+                            <Badge variant="success" className="bg-virtualis-gold-100 text-virtualis-gold-800 border-virtualis-gold-200 dark:bg-virtualis-gold-900/30 dark:text-virtualis-gold-300 dark:border-virtualis-gold-800">
+                              {Math.round(result.similarity_score * 100)}% relevante
+                            </Badge>
+                          )}
+                        </div>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                          {result.ementa}
+                        </h3>
+                        {result.assunto && (
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            {result.assunto.substring(0, 200)}...
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mb-3">
+                          Criado em {formatDate(result.created_at)}
+                        </p>
+                        <div className="flex gap-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+                          <Button
+                            onClick={() => handleDocumentAnalysis(result)}
+                            variant={analysisMode === 'deep' ? 'premium' : 'primary'}
+                            size="sm"
+                            className="hover:border-amber-500/50"
+                          >
+                            <Brain className="h-4 w-4 mr-1.5" />
+                            <span className="text-xs">Analisar</span>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="hover:border-virtualis-gold-500/50 hover:text-virtualis-gold-600"
+                            onClick={() => handleView(result)}
+                          >
+                            <Eye className="h-4 w-4 mr-1.5" />
+                            <span className="text-xs">Ver</span>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="hover:border-virtualis-gold-500/50 hover:text-virtualis-gold-600"
+                            onClick={() => handleDownload(result)}
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>

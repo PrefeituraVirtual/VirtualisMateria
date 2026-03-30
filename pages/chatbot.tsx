@@ -825,13 +825,17 @@ ${analysis.result.recommendations?.join('\n') || 'Nenhuma recomendação'}
             Pular para sugestões
           </a>
         </div>
-        <div className="max-w-7xl mx-auto h-[calc(100vh-9rem)] overflow-hidden">
+        <div className="max-w-7xl mx-auto h-[calc(100dvh-9rem)] overflow-hidden">
           <div className="flex gap-4 h-full">
+            {/* Overlay mobile */}
+            {showSidebar && (
+              <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setShowSidebar(false)} />
+            )}
             {/* Sidebar de Conversas */}
             <div
               role="complementary"
               aria-label="Histórico de conversas"
-              className={`${showSidebar ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden`}
+              className={`transition-all duration-300 overflow-hidden fixed inset-y-0 left-0 z-50 lg:static lg:z-auto top-16 lg:top-0 ${showSidebar ? 'w-72 lg:w-64' : 'w-0'}`}
             >
               <Card className="h-full flex flex-col glass glass-dark border-0">
                 <div className="p-4 border-b-0 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-virtualis-gold-500/50 after:to-transparent">
@@ -875,8 +879,8 @@ ${analysis.result.recommendations?.join('\n') || 'Nenhuma recomendação'}
             <div className="flex-1 flex flex-col min-h-0">
               <Card className="flex-1 flex flex-col min-h-0 glass glass-dark border-0">
                 {/* Header */}
-                <div className="p-4 border-b-0 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-virtualis-gold-500/50 after:to-transparent flex items-center justify-between bg-white/5 dark:bg-gray-900/5 backdrop-blur-sm">
-                  <div className="flex items-center gap-3">
+                <div className="p-3 sm:p-4 border-b-0 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-virtualis-gold-500/50 after:to-transparent flex flex-wrap items-center gap-2 sm:gap-3 bg-white/5 dark:bg-gray-900/5 backdrop-blur-sm">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -885,52 +889,50 @@ ${analysis.result.recommendations?.join('\n') || 'Nenhuma recomendação'}
                     >
                       <Menu className="h-5 w-5" />
                     </Button>
-                    <div>
-                      <h2 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                        <Scale className="h-5 w-5 text-blue-600" />
-                        Especialista Legislativo
+                    <div className="min-w-0">
+                      <h2 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2 text-sm sm:text-base">
+                        <Scale className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
+                        <span className="truncate">Especialista Legislativo</span>
                       </h2>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 items-center gap-1 hidden sm:flex">
                         Powered by <span className="font-medium text-blue-600 dark:text-blue-400">Virtualis</span>
-                        {/* {false && (
-                          <span className="text-purple-600">• DeepSeek {analysisMode === 'deep' ? 'R1' : 'Chat'}</span>
-                        )} */}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3 ml-auto">
                     {/* Toggle de Modo */}
-                    <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                    <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5 sm:p-1">
                       <button
                         onClick={() => setChatType('chat')}
                         aria-label="Modo chat"
                         aria-pressed={chatType === 'chat'}
-                        className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all ${
+                        className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-1.5 transition-all ${
                           chatType === 'chat'
                             ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm'
                             : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
                         }`}
                       >
-                        <MessageCircle className="h-4 w-4" />
+                        <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         Chat
                       </button>
                       <button
                         onClick={() => setChatType('pesquisa')}
                         aria-label="Modo pesquisa"
                         aria-pressed={chatType === 'pesquisa'}
-                        className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1.5 transition-all ${
+                        className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-1.5 transition-all ${
                           chatType === 'pesquisa'
                             ? 'bg-white dark:bg-gray-700 text-blue-600 shadow-sm'
                             : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
                         }`}
                       >
-                        <Search className="h-4 w-4" />
-                        Pesquisa
+                        <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        <span className="hidden sm:inline">Pesquisa</span>
+                        <span className="sm:hidden">SQL</span>
                       </button>
                     </div>
 
                     {/* Status */}
-                    <div className="flex items-center gap-2">
+                    <div className="hidden sm:flex items-center gap-2">
                       {analysisState.isRunning && (
                         <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
                           <div className="h-2 w-2 bg-amber-500 rounded-full animate-pulse"></div>
@@ -970,7 +972,7 @@ ${analysis.result.recommendations?.join('\n') || 'Nenhuma recomendação'}
                   role="log"
                   aria-live="polite"
                   aria-relevant="additions"
-                  className="flex-1 overflow-y-auto p-6 space-y-4"
+                  className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4"
                 >
                   {messages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center">
@@ -985,18 +987,18 @@ ${analysis.result.recommendations?.join('\n') || 'Nenhuma recomendação'}
                           <Logo variant="icon" size="lg" disableLink />
                         </div>
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 flex flex-wrap items-center justify-center gap-2">
                         {welcomeMessage.title}
                         {welcomeMessage.badgeText && (
-                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${welcomeMessage.badgeColor}`}>
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap ${welcomeMessage.badgeColor}`}>
                             {welcomeMessage.badgeText}
                           </span>
                         )}
                       </h3>
-                      <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md">
+                      <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6 max-w-md px-2">
                         {welcomeMessage.subtitle}
                       </p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 w-full max-w-2xl px-2 sm:px-0">
                         {suggestedQuestions.map((item, index) => {
                           const IconComponent = iconMap[item.icon] as React.ComponentType<{ className?: string }>
                           return (
@@ -1005,7 +1007,7 @@ ${analysis.result.recommendations?.join('\n') || 'Nenhuma recomendação'}
                               onClick={() => setInputMessage(item.question)}
                               role="button"
                               tabIndex={0}
-                              className={`group relative p-4 text-left rounded-xl border transition-all duration-300 ease-out
+                              className={`group relative p-3 sm:p-4 text-left rounded-xl border transition-all duration-300 ease-out
                                 bg-gradient-to-br ${item.color} ${item.borderColor}
                                 hover:scale-[1.02] hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50
                                 active:scale-[0.98] backdrop-blur-sm`}
@@ -1127,7 +1129,7 @@ ${analysis.result.recommendations?.join('\n') || 'Nenhuma recomendação'}
                           <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center">
                             <Logo variant="icon" size="md" disableLink className="animate-pulse" />
                           </div>
-                          <div className={`p-4 rounded-2xl border transition-all duration-300 min-w-[320px] ${
+                          <div className={`p-4 rounded-2xl border transition-all duration-300 min-w-0 w-full max-w-sm ${
                             chatType === 'pesquisa'
                               ? 'bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 border-emerald-200/50 dark:border-emerald-700/50'
                               : 'bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 border-blue-200/50 dark:border-blue-700/50'
@@ -1205,7 +1207,7 @@ ${analysis.result.recommendations?.join('\n') || 'Nenhuma recomendação'}
                             description={messageError?.message || 'Ocorreu um erro ao processar sua mensagem.'}
                             variant="inline"
                             showDetails
-                            className="min-w-[320px]"
+                            className="min-w-0 w-full max-w-sm"
                           />
                         </div>
                       )}
@@ -1228,7 +1230,7 @@ ${analysis.result.recommendations?.join('\n') || 'Nenhuma recomendação'}
                 {/* Input */}
                 <div
                   id="chat-input"
-                  className="p-4 border-t-0 relative after:absolute after:top-0 after:left-0 after:w-full after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-virtualis-gold-500/50 after:to-transparent bg-white/5 dark:bg-gray-900/5 backdrop-blur-sm"
+                  className="p-3 sm:p-4 border-t-0 relative after:absolute after:top-0 after:left-0 after:w-full after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-virtualis-gold-500/50 after:to-transparent bg-white/5 dark:bg-gray-900/5 backdrop-blur-sm"
                 >
                   <div className="relative">
                     <Input
@@ -1243,11 +1245,11 @@ ${analysis.result.recommendations?.join('\n') || 'Nenhuma recomendação'}
                         ? 'Pergunte sobre legislacao municipal...'
                         : 'Pesquise dados no banco (ex: quantas materias em 2024?)'}
                       disabled={isLoading}
-                      className={`w-full pr-28 py-4 rounded-2xl shadow-sm border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 focus:ring-2 focus:ring-blue-500/50 ${inputError ? 'border-red-500 focus:ring-red-500/50' : ''}`}
+                      className={`w-full pr-14 sm:pr-28 py-3 sm:py-4 rounded-2xl shadow-sm border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 focus:ring-2 focus:ring-blue-500/50 ${inputError ? 'border-red-500 focus:ring-red-500/50' : ''}`}
                       maxLength={MAX_MESSAGE_LENGTH}
                     />
                     {/* Contador de caracteres */}
-                    <div className="absolute right-16 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                    <div className="absolute right-16 top-1/2 -translate-y-1/2 text-xs text-gray-400 hidden sm:block">
                       {inputMessage.length > MAX_MESSAGE_LENGTH * 0.8 && (
                         <span className={inputMessage.length >= MAX_MESSAGE_LENGTH ? 'text-red-500 font-medium' : 'text-amber-500'}>
                           {inputMessage.length}/{MAX_MESSAGE_LENGTH}

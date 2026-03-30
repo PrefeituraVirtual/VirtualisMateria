@@ -127,8 +127,8 @@ export default function MateriasPage() {
           </div>
 
           {/* Filtros */}
-          <Card>
-            <CardContent className="pt-6">
+          <Card className="overflow-visible relative z-10">
+            <CardContent className="pt-6 overflow-visible">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Input
                   placeholder="Buscar matérias..."
@@ -175,37 +175,37 @@ export default function MateriasPage() {
                 return (
                   <Card key={materia.id} hover className="cursor-pointer relative overflow-visible">
                     <CardContent className="pt-6">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0" onClick={() => setActiveMenuId(null)}>
-                          <div className="flex items-center gap-3 mb-2">
-                            <Badge variant="info" className="flex-shrink-0">
-                              {tipoConfig.label} {materia.numero}
-                            </Badge>
-                            {getStatusBadge(materia.status)}
-                          </div>
-                          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                            {materia.ementa}
-                          </h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Criada em {formatDate(materia.created_at)}
-                          </p>
+                      <div onClick={() => setActiveMenuId(null)}>
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <Badge variant="info" className="flex-shrink-0">
+                            {tipoConfig.label} {materia.numero}
+                          </Badge>
+                          {getStatusBadge(materia.status)}
                         </div>
-                        <div className="flex gap-2 isolate">
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                          {materia.ementa}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                          Criada em {formatDate(materia.created_at)}
+                        </p>
+                        <div className="flex items-center gap-2 pt-2 border-t border-gray-100 dark:border-gray-800">
                           <Link href={`/materias/${materia.id}`}>
                             <Button variant="outline" size="sm" title="Visualizar">
-                              <Eye className="h-4 w-4" />
+                              <Eye className="h-4 w-4 mr-1.5" />
+                              <span className="text-xs">Ver</span>
                             </Button>
                           </Link>
                           <Link href={`/materias/${materia.id}/editar`}>
                             <Button variant="outline" size="sm" title="Editar">
-                              <Edit className="h-4 w-4" />
+                              <Edit className="h-4 w-4 mr-1.5" />
+                              <span className="text-xs">Editar</span>
                             </Button>
                           </Link>
-                          
-                          <div className="relative">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
+
+                          <div className="relative ml-auto">
+                            <Button
+                              variant="outline"
+                              size="sm"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setActiveMenuId(activeMenuId === materia.id ? null : materia.id);
@@ -213,7 +213,7 @@ export default function MateriasPage() {
                             >
                               <MoreVertical className="h-4 w-4" />
                             </Button>
-                            
+
                             {activeMenuId === materia.id && (
                               <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700">
                                 <button

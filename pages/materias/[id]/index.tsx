@@ -153,25 +153,23 @@ export default function VerMateriaPage() {
       <MainLayout>
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <Link href="/materias">
-                <Button variant="ghost" size="sm" className="mb-2 pl-0">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Voltar para Lista
-                </Button>
-              </Link>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+          <div className="space-y-3">
+            <Link href="/materias">
+              <Button variant="ghost" size="sm" className="pl-0">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Voltar para Lista
+              </Button>
+            </Link>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 flex flex-wrap items-center gap-2 sm:gap-3">
                 {tipoLabel}
-                <span className="text-sm px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full font-normal text-gray-600 dark:text-gray-400">
+                <span className="text-xs sm:text-sm px-2 sm:px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full font-normal text-gray-600 dark:text-gray-400">
                   #{materia.id}
                 </span>
                 {getStatusBadge(materia.status)}
               </h1>
-            </div>
-            <div className="flex gap-2">
               <Link href={`/materias/${materia.id}/editar`}>
-                <Button variant="primary">
+                <Button variant="primary" size="sm">
                   <Edit className="h-4 w-4 mr-2" />
                   Editar
                 </Button>
@@ -189,7 +187,7 @@ export default function VerMateriaPage() {
                 <CardContent>
                   <div className="prose dark:prose-invert max-w-none">
                     <h3 className="font-bold text-lg mb-2">{materia.ementa}</h3>
-                    <div className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 font-mono text-sm bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-200 dark:border-gray-800">
+                    <div className="whitespace-pre-wrap break-words text-gray-700 dark:text-gray-300 font-mono text-xs sm:text-sm bg-gray-50 dark:bg-gray-900/50 p-3 sm:p-4 rounded-lg border border-gray-200 dark:border-gray-800 overflow-x-auto">
                       {materia.texto_original || 'Nenhum texto disponível.'}
                     </div>
                   </div>

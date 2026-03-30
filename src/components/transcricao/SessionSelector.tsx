@@ -283,7 +283,7 @@ export function SessionSelector({ onStartTranscription, onCancelTranscription, i
         <CardContent className="pt-6">
           <div className="space-y-4">
             {/* Search Input */}
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <div className="flex-1">
                 <Input
                   placeholder="Buscar por numero da sessao..."
@@ -300,6 +300,7 @@ export function SessionSelector({ onStartTranscription, onCancelTranscription, i
                 onClick={handleSearch}
                 disabled={isLoadingSessions}
                 isLoading={isLoadingSessions}
+                className="w-full sm:w-auto"
                 aria-label="Buscar"
               >
                 Buscar
@@ -424,7 +425,7 @@ export function SessionSelector({ onStartTranscription, onCancelTranscription, i
                   variant="ghost"
                   size="sm"
                   onClick={handleClearFilters}
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  className="w-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 sm:w-auto"
                 >
                   <X className="h-4 w-4 mr-1" />
                   Limpar filtros
@@ -498,12 +499,11 @@ export function SessionSelector({ onStartTranscription, onCancelTranscription, i
                           )}
                           onClick={() => !hasTranscription && handleSelectSession(session)}
                         >
-                          <div className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-3 flex-1 min-w-0">
-                              {/* Selection indicator */}
+                          <div className="space-y-2">
+                            <div className="flex items-start gap-3 min-w-0">
                               <div
                                 className={cn(
-                                  'w-5 h-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0',
+                                  'w-5 h-5 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 mt-0.5',
                                   isSelected
                                     ? 'bg-virtualis-gold-500 border-virtualis-gold-500 text-white'
                                     : hasTranscription
@@ -515,13 +515,12 @@ export function SessionSelector({ onStartTranscription, onCancelTranscription, i
                                 {hasTranscription && !isSelected && <Check className="h-3 w-3 text-green-500" />}
                               </div>
 
-                              {/* Session info */}
                               <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2 flex-wrap">
+                                <div className="flex flex-wrap items-center gap-2">
                                   <Badge className={cn('text-xs', typeConfig.color)}>
                                     {typeConfig.label}
                                   </Badge>
-                                  <span className="font-semibold text-gray-900 dark:text-gray-100">
+                                  <span className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100">
                                     Sessao #{session.numero}
                                   </span>
                                   {session.legislatura && (
@@ -530,7 +529,7 @@ export function SessionSelector({ onStartTranscription, onCancelTranscription, i
                                     </span>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-4 mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                                   <span className="flex items-center gap-1">
                                     <Calendar className="h-3 w-3" />
                                     {formatSessionDate(session.data)}
@@ -540,48 +539,85 @@ export function SessionSelector({ onStartTranscription, onCancelTranscription, i
                                     Video disponivel
                                   </span>
                                 </div>
-                              </div>
-                            </div>
-
-                            {/* Transcription status */}
-                            <div className="flex-shrink-0 flex items-center gap-2">
-                              {session.transcricao && (['pending', 'processing'].includes(session.transcricao.status)) && (
-                                  <Button
+                                <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0 sm:hidden">
+                                  {session.transcricao && (['pending', 'processing'].includes(session.transcricao.status)) && (
+                                    <Button
                                       variant="ghost"
                                       size="sm"
                                       onClick={async (e) => {
-                                          e.stopPropagation();
-                                          if (session.transcricao?.id) {
-                                              await onCancelTranscription(session.transcricao.id);
-                                              fetchSessions();
-                                          }
+                                        e.stopPropagation();
+                                        if (session.transcricao?.id) {
+                                          await onCancelTranscription(session.transcricao.id);
+                                          fetchSessions();
+                                        }
                                       }}
                                       className="h-6 w-6 p-0 rounded-full text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                                       title="Cancelar transcrição"
-                                  >
+                                    >
                                       <CircleStop className="h-4 w-4" />
-                                  </Button>
-                              )}
-
-                              {session.transcricao ? (
-                                <Badge
-                                  className={cn(
-                                    'text-xs',
-                                    TRANSCRIPTION_STATUS[session.transcricao.status as keyof typeof TRANSCRIPTION_STATUS]?.color ||
-                                    TRANSCRIPTION_STATUS.completed.color
+                                    </Button>
                                   )}
-                                >
-                                  {getIcon(TRANSCRIPTION_STATUS[session.transcricao.status as keyof typeof TRANSCRIPTION_STATUS]?.icon || 'Check')}
-                                  <span className="ml-1">
-                                    {TRANSCRIPTION_STATUS[session.transcricao.status as keyof typeof TRANSCRIPTION_STATUS]?.label || 'Transcrita'}
-                                  </span>
-                                </Badge>
-                              ) : (
-                                <Badge className="text-xs bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                                  <FileAudio className="h-3 w-3" />
-                                  <span className="ml-1">Nao transcrita</span>
-                                </Badge>
-                              )}
+                                  {session.transcricao ? (
+                                    <Badge
+                                      className={cn(
+                                        'text-xs',
+                                        TRANSCRIPTION_STATUS[session.transcricao.status as keyof typeof TRANSCRIPTION_STATUS]?.color ||
+                                        TRANSCRIPTION_STATUS.completed.color
+                                      )}
+                                    >
+                                      {getIcon(TRANSCRIPTION_STATUS[session.transcricao.status as keyof typeof TRANSCRIPTION_STATUS]?.icon || 'Check')}
+                                      <span className="ml-1">
+                                        {TRANSCRIPTION_STATUS[session.transcricao.status as keyof typeof TRANSCRIPTION_STATUS]?.label || 'Transcrita'}
+                                      </span>
+                                    </Badge>
+                                  ) : (
+                                    <Badge className="text-xs bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                                      <FileAudio className="h-3 w-3" />
+                                      <span className="ml-1">Nao transcrita</span>
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex-shrink-0 hidden sm:flex items-center gap-2">
+                                {session.transcricao && (['pending', 'processing'].includes(session.transcricao.status)) && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={async (e) => {
+                                      e.stopPropagation();
+                                      if (session.transcricao?.id) {
+                                        await onCancelTranscription(session.transcricao.id);
+                                        fetchSessions();
+                                      }
+                                    }}
+                                    className="h-6 w-6 p-0 rounded-full text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                    title="Cancelar transcrição"
+                                  >
+                                    <CircleStop className="h-4 w-4" />
+                                  </Button>
+                                )}
+
+                                {session.transcricao ? (
+                                  <Badge
+                                    className={cn(
+                                      'text-xs',
+                                      TRANSCRIPTION_STATUS[session.transcricao.status as keyof typeof TRANSCRIPTION_STATUS]?.color ||
+                                      TRANSCRIPTION_STATUS.completed.color
+                                    )}
+                                  >
+                                    {getIcon(TRANSCRIPTION_STATUS[session.transcricao.status as keyof typeof TRANSCRIPTION_STATUS]?.icon || 'Check')}
+                                    <span className="ml-1">
+                                      {TRANSCRIPTION_STATUS[session.transcricao.status as keyof typeof TRANSCRIPTION_STATUS]?.label || 'Transcrita'}
+                                    </span>
+                                  </Badge>
+                                ) : (
+                                  <Badge className="text-xs bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                                    <FileAudio className="h-3 w-3" />
+                                    <span className="ml-1">Nao transcrita</span>
+                                  </Badge>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </motion.div>
@@ -596,7 +632,7 @@ export function SessionSelector({ onStartTranscription, onCancelTranscription, i
 
         {/* Pagination */}
         {pagination.totalPages > 1 && (
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <div className="flex flex-col gap-3 border-t border-gray-200 p-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-sm text-gray-500 dark:text-gray-400">
               Pagina {pagination.page} de {pagination.totalPages}
             </span>
@@ -658,26 +694,27 @@ export function SessionSelector({ onStartTranscription, onCancelTranscription, i
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-end gap-4">
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => setSelectedSession(null)}
-                        disabled={isLoading}
-                      >
-                        Cancelar
-                      </Button>
-                      <Button
-                        variant="primary"
-                        onClick={handleStartTranscription}
-                        disabled={isLoading}
-                        isLoading={isLoading}
-                        className="bg-virtualis-gold-500 hover:bg-virtualis-gold-600 text-white border-transparent"
-                      >
-                        <Mic className="h-4 w-4 mr-2" />
-                        Transcrever Sessao
-                      </Button>
-                    </div>
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center sm:justify-end gap-2 sm:gap-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSelectedSession(null)}
+                      disabled={isLoading}
+                      className="w-full sm:w-auto"
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={handleStartTranscription}
+                      disabled={isLoading}
+                      isLoading={isLoading}
+                      className="bg-virtualis-gold-500 hover:bg-virtualis-gold-600 text-white border-transparent w-full sm:w-auto"
+                    >
+                      <Mic className="h-4 w-4 mr-2" />
+                      Transcrever Sessao
+                    </Button>
                   </div>
                 </div>
               </CardContent>

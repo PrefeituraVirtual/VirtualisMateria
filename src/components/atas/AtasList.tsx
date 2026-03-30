@@ -91,7 +91,7 @@ export function AtasList({
   return (
     <div className="space-y-4">
       {/* Results Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-gray-600 dark:text-gray-400">
           Mostrando {atas.length} de {pagination.total} atas
         </p>
@@ -119,18 +119,19 @@ export function AtasList({
 
       {/* Pagination */}
       {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4 mt-8">
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button
             variant="outline"
+            size="sm"
             onClick={() => onPageChange(pagination.page - 1)}
             disabled={pagination.page === 1 || isLoading}
             aria-label="Pagina anterior"
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
-            Anterior
+            <span className="hidden sm:inline">Anterior</span>
           </Button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex max-w-full items-center gap-2 overflow-x-auto px-1">
             {/* First Page */}
             {pagination.page > 2 && (
               <>
@@ -202,11 +203,12 @@ export function AtasList({
 
           <Button
             variant="outline"
+            size="sm"
             onClick={() => onPageChange(pagination.page + 1)}
             disabled={pagination.page === pagination.totalPages || isLoading}
             aria-label="Proxima pagina"
           >
-            Proximo
+            <span className="hidden sm:inline">Proximo</span>
             <ChevronRight className="h-4 w-4 ml-2" />
           </Button>
         </div>

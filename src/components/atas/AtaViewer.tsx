@@ -98,11 +98,12 @@ function PdfViewer({ ataId, onError }: PdfViewerProps) {
             Isso pode ocorrer se o arquivo ainda não foi gerado ou houve um problema de conexão.
           </p>
         )}
-        <div className="flex gap-2">
+        <div className="flex w-full justify-center">
           <Button
             variant="outline"
             size="sm"
             onClick={handleRetry}
+            className="w-full sm:w-auto"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Tentar novamente
@@ -114,7 +115,7 @@ function PdfViewer({ ataId, onError }: PdfViewerProps) {
 
   if (pdfStatus === 'loading') {
     return (
-      <div className="w-full h-[300px] flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg">
+      <div className="flex h-[240px] w-full items-center justify-center rounded-lg bg-gray-50 dark:bg-gray-800 sm:h-[300px]">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-virtualis-blue-600 mb-3"></div>
           <p className="text-sm text-gray-600 dark:text-gray-400">Verificando PDF...</p>
@@ -127,10 +128,10 @@ function PdfViewer({ ataId, onError }: PdfViewerProps) {
     <div className="space-y-2">
       <iframe
         src={blobUrl || ''}
-        className="w-full h-[500px] rounded-lg border border-gray-200 dark:border-gray-700"
+        className="h-[320px] w-full rounded-lg border border-gray-200 dark:border-gray-700 sm:h-[500px]"
         title="Visualização do PDF da Ata"
       />
-      <div className="flex justify-end">
+      <div className="flex justify-start sm:justify-end">
         <a
           href={blobUrl || ''}
           target="_blank"
@@ -231,7 +232,7 @@ export function AtaViewer({
   const statusConfig = ATA_STATUSES[status as AtaStatus] || null
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+    <Modal isOpen={isOpen} onClose={onClose} className="flex max-h-[calc(100dvh-1.5rem)] max-w-4xl flex-col overflow-hidden sm:max-h-[90vh]">
       <ModalHeader>
         <ModalTitle className="flex items-center gap-2">
           <FileText className="h-5 w-5 text-virtualis-blue-600" />
@@ -239,7 +240,7 @@ export function AtaViewer({
         </ModalTitle>
       </ModalHeader>
 
-      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+      <div className="custom-scrollbar flex-1 overflow-y-auto px-1 sm:pr-2">
         {isLoading ? (
           <div className="flex justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-virtualis-blue-600"></div>
@@ -260,7 +261,7 @@ export function AtaViewer({
                 <Badge variant="outline">Sessão #{sessionNumber}</Badge>
               </div>
 
-              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              <h2 className="mb-2 text-lg font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
                 {title}
               </h2>
 
@@ -316,8 +317,28 @@ export function AtaViewer({
                   <Users className="h-4 w-4" />
                   Participantes ({ata.participants.length})
                 </h3>
-                <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden">
-                  <table className="w-full text-sm">
+                <div className="space-y-3 md:hidden">
+                  {ata.participants.map((participant) => (
+                    <div
+                      key={participant.id}
+                      className="rounded-md border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-900"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-gray-900 dark:text-gray-100">{participant.name}</p>
+                          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{participant.role}</p>
+                        </div>
+                        {participant.present ? (
+                          <Badge variant="success" size="sm">Presente</Badge>
+                        ) : (
+                          <Badge variant="error" size="sm">Ausente</Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="hidden overflow-x-auto rounded-md border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 md:block">
+                  <table className="w-full min-w-[640px] text-sm">
                     <thead className="bg-gray-50 dark:bg-gray-800 border-b-0 relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-virtualis-gold-500/50 after:to-transparent">
                       <tr>
                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Nome</th>
@@ -368,7 +389,7 @@ export function AtaViewer({
                             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{item.description}</p>
                           )}
                           {item.votingResult && (
-                            <div className="flex items-center gap-2 mt-2">
+                            <div className="mt-2 flex flex-wrap items-center gap-2">
                               <Badge variant={item.votingResult.approved ? 'success' : 'error'} size="sm">
                                 {item.votingResult.approved ? 'Aprovado' : 'Rejeitado'}
                               </Badge>
@@ -392,9 +413,9 @@ export function AtaViewer({
                   <FileText className="h-4 w-4" />
                   Conteudo Completo
                 </h3>
-                <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-md max-h-96 overflow-y-auto">
+                <div className="max-h-96 overflow-y-auto rounded-md border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800 sm:p-4">
                   <div
-                    className="prose dark:prose-invert max-w-none text-sm"
+                    className="prose max-w-none break-words text-sm dark:prose-invert"
                     dangerouslySetInnerHTML={{
                       __html: sanitizeHtml(ata.content.replace(/\n/g, '<br/>'))
                     }}
@@ -405,7 +426,7 @@ export function AtaViewer({
 
             {/* Metadata */}
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4 text-xs text-gray-500 dark:text-gray-400">
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-4">
                 {ata.createdAt && (
                   <span>Criado em: {format(parseISO(ata.createdAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</span>
                 )}
@@ -430,21 +451,21 @@ export function AtaViewer({
           </Button>
 
           {ata && onExportPdf && (
-            <Button variant="outline" onClick={() => onExportPdf(ata)}>
+            <Button variant="outline" onClick={() => onExportPdf(ata)} className="w-full sm:w-auto">
               <Download className="h-4 w-4 mr-2" />
               Exportar PDF
             </Button>
           )}
 
           {ata && onEdit && status !== 'APR' && (
-            <Button variant="outline" onClick={() => onEdit(ata)}>
+            <Button variant="outline" onClick={() => onEdit(ata)} className="w-full sm:w-auto">
               <Edit2 className="h-4 w-4 mr-2" />
               Editar
             </Button>
           )}
 
           {ata && onApprove && (status === 'EV' || status === 'AGLV') && (
-            <Button variant="primary" onClick={() => onApprove(ata)}>
+            <Button variant="primary" onClick={() => onApprove(ata)} className="w-full sm:w-auto">
               <CheckCircle className="h-4 w-4 mr-2" />
               Aprovar
             </Button>

@@ -193,7 +193,9 @@ export default function DocumentosPage() {
                 </div>
               </div>
             ) : (
-              <div className="relative overflow-x-auto">
+              <>
+              {/* Desktop: tabela */}
+              <div className="hidden sm:block relative overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead className="bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400 font-medium">
                     <tr>
@@ -258,22 +260,70 @@ export default function DocumentosPage() {
                   </tbody>
                 </table>
               </div>
+
+              {/* Mobile: cards */}
+              <div className="sm:hidden space-y-3">
+                {documents.map((doc) => {
+                  const IconName = getDocIcon(doc.type)
+                  const Icon = docIconMap[IconName] || File
+
+                  return (
+                    <div key={doc.id} className="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 space-y-2">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400 flex-shrink-0">
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <p className="font-medium text-sm text-gray-900 dark:text-gray-100 break-words line-clamp-2">
+                          {doc.title || 'Sem título'}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <Badge variant="default" size="sm">{doc.type}</Badge>
+                        <span>{formatDate(doc.created_at)}</span>
+                      </div>
+                      <div className="flex gap-2 justify-end">
+                        {doc.has_content && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDownload(doc)}
+                            className="h-8 w-8 p-0"
+                            title="Baixar"
+                          >
+                            <Download className="h-4 w-4 text-gray-500" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDelete(doc.id, doc.title)}
+                          className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          title="Excluir"
+                        >
+                          <Trash2 className="h-4 w-4 text-gray-500" />
+                        </Button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              </>
             )}
 
             {/* Pagination Controls */}
             {pagination.totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-800 pt-4 mt-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 dark:border-gray-800 pt-4 mt-4">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setPagination(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
                   disabled={pagination.page === 1 || isLoading}
                 >
-                  <ChevronLeft className="h-4 w-4 mr-2" />
-                  Anterior
+                  <ChevronLeft className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Anterior</span>
                 </Button>
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Página {pagination.page} de {pagination.totalPages}
+                  <span className="hidden sm:inline">Página </span>{pagination.page}/{pagination.totalPages}
                 </span>
                 <Button
                   variant="outline"
@@ -281,8 +331,8 @@ export default function DocumentosPage() {
                   onClick={() => setPagination(prev => ({ ...prev, page: Math.min(pagination.totalPages, prev.page + 1) }))}
                   disabled={pagination.page === pagination.totalPages || isLoading}
                 >
-                  Próxima
-                  <ChevronRight className="h-4 w-4 ml-2" />
+                  <span className="hidden sm:inline">Próxima</span>
+                  <ChevronRight className="h-4 w-4 ml-1 sm:ml-2" />
                 </Button>
               </div>
             )}

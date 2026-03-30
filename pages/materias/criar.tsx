@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { SEOHead } from '@/components/common/SEOHead'
 import { MainLayout } from '@/components/layout/MainLayout'
@@ -31,6 +31,19 @@ export default function CriarMateriaPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   const { token: csrfToken } = useCSRFToken()
+
+  const isMounted = useRef(true)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+    }
+  }, [])
 
   const validateStep1 = (): boolean => {
     try {
@@ -100,7 +113,7 @@ export default function CriarMateriaPage() {
     ]
 
     let stageIndex = 0
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       stageIndex = (stageIndex + 1) % progressStages.length
       setLoadingText(progressStages[stageIndex])
     }, 5000)
@@ -110,9 +123,9 @@ export default function CriarMateriaPage() {
         formData.tema,
         formData.tipo,
         {
-          timeout: 180000, // 3 minutes for deep AI analysis
+          timeout: 180000,
           onProgress: (stage) => {
-            setLoadingText(stage)
+            if (isMounted.current) setLoadingText(stage)
           },
           onRetry: (attempt) => {
             toast.loading(`Reconectando ao servidor... (tentativa ${attempt + 1})`, {
@@ -122,6 +135,8 @@ export default function CriarMateriaPage() {
           }
         }
       )
+
+      if (!isMounted.current) return
 
       setFormData(prev => ({
         ...prev,
@@ -135,6 +150,7 @@ export default function CriarMateriaPage() {
       setStep(3)
 
     } catch (error: any) {
+      if (!isMounted.current) return
       console.error('Error getting AI suggestions:', error)
 
       const errorMessage = error.message || 'Erro desconhecido'
@@ -149,7 +165,6 @@ export default function CriarMateriaPage() {
           'A IA retornou uma resposta em formato inesperado. Tente novamente.',
           { duration: 5000 }
         )
-        // Still advance to step 3 so user can fill manually
         setStep(3)
       } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
         toast.error(
@@ -160,9 +175,12 @@ export default function CriarMateriaPage() {
         toast.error(`Erro ao gerar sugestoes: ${errorMessage}`, { duration: 5000 })
       }
     } finally {
-      clearInterval(interval)
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
       toast.dismiss('ai-retry')
-      setIsSuggesting(false)
+      if (isMounted.current) setIsSuggesting(false)
     }
   }, [formData.tema, formData.tipo])
 
@@ -224,7 +242,7 @@ export default function CriarMateriaPage() {
                 <React.Fragment key={s}>
                   <div className="flex items-center">
                     <div
-                      className={`flex items-center justify-center w-10 h-10 rounded-full font-semibold ${
+                      className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full font-semibold text-sm sm:text-base ${
                         step >= s
                           ? 'bg-virtualis-blue-600 text-white'
                           : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
@@ -232,14 +250,14 @@ export default function CriarMateriaPage() {
                     >
                       {s}
                     </div>
-                    <span className={`ml-2 ${step >= s ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}`}>
-                      {s === 1 && 'Tipo e Tema'}
+                    <span className={`ml-1.5 sm:ml-2 text-xs sm:text-sm ${step >= s ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'}`}>
+                      {s === 1 && <><span className="hidden sm:inline">Tipo e Tema</span><span className="sm:hidden">Tipo</span></>}
                       {s === 2 && 'Busca IA'}
                       {s === 3 && 'Detalhes'}
                     </span>
                   </div>
                   {s < 3 && (
-                    <div className={`w-16 h-1 mx-4 ${step > s ? 'bg-virtualis-blue-600' : 'bg-gray-200 dark:bg-gray-700'}`} />
+                    <div className={`w-8 sm:w-16 h-1 mx-2 sm:mx-4 ${step > s ? 'bg-virtualis-blue-600' : 'bg-gray-200 dark:bg-gray-700'}`} />
                   )}
                 </React.Fragment>
               ))}
@@ -353,23 +371,25 @@ export default function CriarMateriaPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 px-1">
-                   <div className="flex items-center gap-2 text-sm font-medium text-virtualis-blue-700 dark:text-virtualis-blue-300 bg-virtualis-blue-50 dark:bg-virtualis-blue-900/10 px-3 py-1.5 rounded-full border border-virtualis-blue-100 dark:border-virtualis-blue-800">
-                    <BrainCircuit className="h-4 w-4" />
+                <div className="flex items-start gap-2 px-1">
+                   <div className="flex items-start sm:items-center gap-2 text-xs sm:text-sm font-medium text-virtualis-blue-700 dark:text-virtualis-blue-300 bg-virtualis-blue-50 dark:bg-virtualis-blue-900/10 px-3 py-1.5 rounded-xl sm:rounded-full border border-virtualis-blue-100 dark:border-virtualis-blue-800">
+                    <BrainCircuit className="h-4 w-4 flex-shrink-0 mt-0.5 sm:mt-0" />
                     <span>Modo Virtualis com Raciocínio Ativo: Análise Legislativa Profunda (Alta Precisão)</span>
                    </div>
                 </div>
 
-                <div className="flex justify-end gap-3">
+                <div className="flex flex-wrap justify-end gap-2 sm:gap-3">
                   <Button
                     variant="outline"
+                    size="sm"
                     onClick={() => setStep(1)}
                   >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
                     Voltar
                   </Button>
                   <Button
                     variant="ai"
+                    size="sm"
                     onClick={handleSuggestDetails}
                     disabled={isSuggesting}
                   >
@@ -380,17 +400,20 @@ export default function CriarMateriaPage() {
                       </span>
                     ) : (
                       <>
-                        Gerar Documento com IA
-                        <Sparkles className="h-4 w-4 ml-2" />
+                        <span className="hidden sm:inline">Gerar Documento com IA</span>
+                        <span className="sm:hidden">Gerar com IA</span>
+                        <Sparkles className="h-4 w-4 ml-1 sm:ml-2" />
                       </>
                     )}
                   </Button>
                   <Button
                     variant="primary"
+                    size="sm"
                     onClick={() => setStep(3)}
                   >
-                    Continuar Manualmente
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                    <span className="hidden sm:inline">Continuar Manualmente</span>
+                    <span className="sm:hidden">Manual</span>
+                    <ArrowRight className="h-4 w-4 ml-1 sm:ml-2" />
                   </Button>
                 </div>
               </CardContent>
@@ -474,7 +497,7 @@ export default function CriarMateriaPage() {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-3">
+                <div className="flex flex-wrap justify-end gap-2 sm:gap-3">
                   <Button
                     variant="outline"
                     onClick={() => setStep(2)}

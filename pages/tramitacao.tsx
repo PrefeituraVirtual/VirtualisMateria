@@ -148,7 +148,7 @@ export default function TramitacaoPage() {
       />
 
       <div className="h-[calc(100vh-100px)] flex flex-col">
-        <header className="flex justify-between items-center mb-6 px-4">
+        <header className="flex flex-wrap justify-between items-center gap-2 mb-6 px-4">
             <div>
                 <h1 className="text-2xl font-bold flex items-center gap-2">
                     <Kanban className="h-6 w-6 text-blue-600" />
@@ -162,8 +162,8 @@ export default function TramitacaoPage() {
             </Button>
         </header>
 
-        {/* KANBAN BOARD -- Read-Only */}
-        <div className="flex-1 overflow-x-auto overflow-y-hidden px-4 pb-4">
+        {/* KANBAN BOARD -- Desktop */}
+        <div className="hidden lg:block flex-1 overflow-x-auto overflow-y-hidden px-4 pb-4">
             {loading ? (
                  <div className="flex h-full items-center justify-center min-w-[1400px]">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -179,6 +179,47 @@ export default function TramitacaoPage() {
                         />
                     ))}
                 </div>
+            )}
+        </div>
+
+        {/* LISTA POR STATUS -- Mobile */}
+        <div className="lg:hidden flex-1 overflow-y-auto px-4 pb-4 space-y-6">
+            {loading ? (
+                <div className="flex h-full items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                </div>
+            ) : (
+                COLUMNS.map(column => {
+                    const columnCards = cards.filter(c => c.status === column.id)
+                    if (columnCards.length === 0) return null
+                    return (
+                        <div key={column.id}>
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className={`p-1.5 rounded-md ${column.color}`}>
+                                    <column.icon className="h-4 w-4" />
+                                </div>
+                                <h3 className="font-semibold text-sm">{column.label}</h3>
+                                <Badge className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300">{columnCards.length}</Badge>
+                            </div>
+                            <div className="space-y-2">
+                                {columnCards.map(card => (
+                                    <div
+                                        key={card.id}
+                                        onClick={() => handleCardClick(card.id)}
+                                        className="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-sm transition-shadow"
+                                    >
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <Badge variant="outline" className="text-[10px] h-5">{card.code}</Badge>
+                                            <Badge className="text-[10px] px-1.5 py-0 bg-blue-50 text-blue-700 border-blue-100">{card.type}</Badge>
+                                        </div>
+                                        <p className="font-medium text-sm line-clamp-2">{card.title}</p>
+                                        <p className="text-xs text-gray-500 mt-1">{card.date}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )
+                })
             )}
         </div>
       </div>

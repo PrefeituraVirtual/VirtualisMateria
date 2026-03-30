@@ -379,7 +379,7 @@ export default function AgendaPage() {
                 tabIndex={0}
                 aria-label={`${format(day, "d 'de' MMMM", { locale: ptBR })}${dayEvents.length > 0 ? `, ${dayEvents.length} evento${dayEvents.length > 1 ? 's' : ''}` : ''}`}
                 aria-pressed={isSelected}
-                className={`min-h-[100px] p-2 rounded-lg border transition-all cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                className={`min-h-[60px] sm:min-h-[100px] p-1 sm:p-2 rounded-lg border transition-all cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
                     isSelected
                     ? 'border-blue-500 ring-1 ring-blue-500 bg-blue-50 dark:bg-blue-900/10'
                     : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900'
@@ -448,9 +448,9 @@ export default function AgendaPage() {
               <p className="text-gray-600 dark:text-gray-400">Gerencie sessões, compromissos e datas limites regimentais.</p>
             </div>
             
-            <div className="flex gap-2">
-            <Button 
-                variant="outline" 
+            <div className="flex flex-wrap gap-2">
+            <Button
+                variant="outline"
                 onClick={() => setActiveFilter('all')}
                 className={activeFilter === 'all' ? 'bg-blue-50 text-blue-700 border-blue-200' : ''}
             >

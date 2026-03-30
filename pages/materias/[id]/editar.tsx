@@ -171,41 +171,43 @@ export default function EditarMateriaPage() {
       <MainLayout>
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.push('/materias')}
-                className="mb-2"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Voltar para Lista
-              </Button>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+          <div className="space-y-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push('/materias')}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Voltar para Lista
+            </Button>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2 sm:gap-3">
                 Editar Matéria
-                <span className="text-sm px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full font-normal text-gray-600 dark:text-gray-400">
+                <span className="text-xs sm:text-sm px-2 sm:px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full font-normal text-gray-600 dark:text-gray-400">
                   #{formData.id}
                 </span>
               </h1>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={loadMateria}
-                disabled={isSaving}
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Recarregar
-              </Button>
-              <Button
-                variant="primary"
-                onClick={handleSave}
-                isLoading={isSaving}
-              >
-                <Save className="h-4 w-4 mr-2" />
-                Salvar Alterações
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={loadMateria}
+                  disabled={isSaving}
+                >
+                  <RefreshCw className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Recarregar</span>
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleSave}
+                  isLoading={isSaving}
+                >
+                  <Save className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Salvar Alterações</span>
+                  <span className="sm:hidden">Salvar</span>
+                </Button>
+              </div>
             </div>
           </div>
 
